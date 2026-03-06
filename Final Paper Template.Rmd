@@ -12,13 +12,14 @@ fontsize: 11pt
 
 ```{r setup, include=FALSE}
 #Use this code chunk to include libraries, and set global options.
+library(LearnBayes)
 ```
 
 # Abstract
 Write your abstract here.
 
 # Keywords
-*Keyword 1*, *Keyword 2*, *Keyword 3*, *Keyword 4*
+*Bayesian Statistics*, *Likelihood Inference*, *Relative Risk*, *Efficacy*
 
 \newpage
 
@@ -39,6 +40,14 @@ Detail the likelihood approach.
 
 ## Bayesian Inference
 Detail the Bayesian approach.
+
+```{r, meredith_bayes_ab, echo = F}
+ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
+            quantile2 = list(p = .1, x = 1/2))
+```
+
+From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
+
 
 # Results
 Present your findings. 
