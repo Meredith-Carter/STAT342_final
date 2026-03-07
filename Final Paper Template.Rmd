@@ -48,6 +48,22 @@ ab <- beta.select(quantile1 = list(p = .01, x = 7/17),
 
 From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
 
+```{r, meredith_bayes_vis}
+ggplot() + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Prior"), 
+                args = list(shape1 = ab[1], shape2 = ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Posterior"), 
+                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
+                xlim = c(0, 1)) + 
+  # add log likelihood later
+  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
+       subtitle = "t = 8 observed", 
+       x = expression(pi), 
+       y = "PDF")
+```
 
 # Results
 Present your findings. 
