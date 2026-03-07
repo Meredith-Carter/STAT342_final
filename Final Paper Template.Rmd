@@ -38,6 +38,10 @@ Describe the statistical model used.
 ## Likelihood Inference
 Detail the likelihood approach.
 
+$\pi = \frac{1 - \psi}{2 - \psi} \\ L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162} \\ L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{2 - \psi - 1 + \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162} \\ \ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi)) \\ \frac{d}{d\psi}\ell(\psi) = \frac{-8}{1 - \psi} + \frac{8}{2 - \psi} + \frac{162}{2 - \psi} = \frac{170}{2 - \psi} - \frac{8}{1 - \psi} = 0 \\ 170 - 170 \psi - 16 + 8\psi = 0 \\ 162\psi = 154 \\ \hat\psi^{mle}_0 = 0.9506173$  
+
+We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
+
 ## Bayesian Inference
 Detail the Bayesian approach.
 
@@ -49,6 +53,10 @@ ab <- beta.select(quantile1 = list(p = .01, x = 7/17),
 From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
 
 ```{r, meredith_bayes_vis}
+loglik_binom <- function(psi, n, x){
+  log(choose(n, x)) + x * log(1 - psi) - x * log(2 - psi) - (n - x) * log(2 - psi)
+}
+
 ggplot() + 
   geom_function(fun = dbeta, 
                 mapping = aes(color = "Prior"), 
@@ -58,10 +66,40 @@ ggplot() +
                 mapping = aes(color = "Posterior"), 
                 args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
                 xlim = c(0, 1)) + 
-  # add log likelihood later
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
        subtitle = "t = 8 observed", 
-       x = expression(pi), 
+       x = expression(psi), 
+       y = "PDF")
+
+ggplot() + 
+  geom_function(fun = loglik_binom, 
+                mapping = aes(color = "Log Likelihood"), 
+                args = list(n = 170, x = 8), 
+                xlim = c(0, 1), 
+                n = 500) +
+  geom_vline(xintercept = 0.9506173) + 
+  labs(title = "Plot of Log Likelihood", 
+       subtitle = "t = 8 observed", 
+       x = expression(psi), 
+       y = "PDF")
+
+ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
+  geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
+                mapping = aes(color = "Prior"), 
+                args = list(shape1 = ab[1], shape2 = ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Posterior"), 
+                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = loglik_binom, 
+                mapping = aes(color = "Log Likelihood"), 
+                args = list(n = 170, x = 8), 
+                xlim = c(0, 1), 
+                n = 500) + 
+  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
+       subtitle = "t = 8 observed", 
+       x = expression(psi), 
        y = "PDF")
 ```
 
