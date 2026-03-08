@@ -141,6 +141,58 @@ df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411),
 df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
 
 mosaicplot(table(df))
+
+ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
+            quantile2 = list(p = .1, x = 1/2))
+
+loglik_binom <- function(psi, n, x){
+  log(choose(n, x)) + x * log(1 - psi) - x * log(2 - psi) - (n - x) * log(2 - psi)
+}
+
+ggplot() + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Prior"), 
+                args = list(shape1 = ab[1], shape2 = ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Posterior"), 
+                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
+                xlim = c(0, 1)) + 
+  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
+       subtitle = "t = 8 observed", 
+       x = expression(psi), 
+       y = "PDF")
+
+ggplot() + 
+  geom_function(fun = loglik_binom, 
+                mapping = aes(color = "Log Likelihood"), 
+                args = list(n = 170, x = 8), 
+                xlim = c(0, 1), 
+                n = 500) +
+  geom_vline(xintercept = 0.9506173) + 
+  labs(title = "Plot of Log Likelihood", 
+       subtitle = "t = 8 observed", 
+       x = expression(psi), 
+       y = "PDF")
+
+ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
+  geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
+                mapping = aes(color = "Prior"), 
+                args = list(shape1 = ab[1], shape2 = ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = dbeta, 
+                mapping = aes(color = "Posterior"), 
+                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
+                xlim = c(0, 1)) + 
+  geom_function(fun = loglik_binom, 
+                mapping = aes(color = "Log Likelihood"), 
+                args = list(n = 170, x = 8), 
+                xlim = c(0, 1), 
+                n = 500) + 
+  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
+       subtitle = "t = 8 observed", 
+       x = expression(psi), 
+       y = "PDF")
 ```
 
 ## Proofs
