@@ -28,6 +28,15 @@ Provide an introduction with background information.
 
 ```{r label="important_R_code", eval=TRUE, echo=FALSE}
 # You can reference your code in the appendix (sample here).
+df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411), 
+                               rep("placebo", times = 162 + 17511)), 
+                 "covid" = c(rep("yes", times = 8), 
+                             rep("no", times = 17411), 
+                             rep("yes", times = 162), 
+                             rep("no", times = 17511)))
+df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
+
+mosaicplot(table(df))
 ```
 
 # Statistical Methods
@@ -123,6 +132,15 @@ Smith, A., & Johnson, C. (2023). *Title of the Online Article*. Retrieved from h
 
 ## Code
 ```{r ref.label = "important_R_code", eval=FALSE}
+df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411), 
+                               rep("placebo", times = 162 + 17511)), 
+                 "covid" = c(rep("yes", times = 8), 
+                             rep("no", times = 17411), 
+                             rep("yes", times = 162), 
+                             rep("no", times = 17511)))
+df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
+
+mosaicplot(table(df))
 ```
 
 ## Proofs
