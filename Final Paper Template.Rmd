@@ -13,6 +13,9 @@ fontsize: 11pt
 ```{r setup, include=FALSE}
 #Use this code chunk to include libraries, and set global options.
 library(LearnBayes)
+library(ggplot2)
+library(dplyr)
+library(janitor)
 ```
 
 # Abstract
@@ -42,7 +45,18 @@ mosaicplot(table(df))
 # Statistical Methods
 
 ## Model
-Describe the statistical model used.
+Here we introduce the statistical model used for inference in this paper. Denote the random variable $T$ as the number in the BNT162b2 vaccine group from the $n=170$ COVID-19 cases. The distribution of $T$ can be well approximated by a binomial distribution (see Appendix proof A for proof). Then $$T\sim Binom(n=170, \pi)$$  where $\pi$ denotes the probability of an individual being in the vaccine group given they contracted COVID-19.
+
+Let $n_1$, $\pi_v$ and $n_2$, $\pi_p$ be the number of individuals and probability an individual contracts COVID-19 in the vaccine and placebo groups respectively. $\pi=P(\text{vaccine}|\text{COVID-19})$ and by Bayes' theorem can be shown to be equal to  $$\pi=\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p}$$
+
+We observe $n_1=17411$ and $n_2=17511$, and since $n_1\approx n_2$, the randomization is 1:1 and we simplify $\pi$ to $$\pi=\frac{\pi_v}{\pi_v+\pi_p}$$
+
+We also observe that our event rates $\pi_v$ and $\pi_p$ are small, so we are will use the ratio between the probabilities, or the relative risk $RR = \frac{\pi_v}{\pi_p}$. Denote the parameter of interest $\psi$ to be the vaccine efficacy defined as $1-RR$:
+$$\psi = 1-\frac{\pi_v}{\pi_p} = \frac{\pi_p-\pi_a}{\pi_p}$$
+Writing this in terms of the binomial probability $\pi$, we have our parameter of interest for inference:
+$$\psi=\frac{1-2\pi}{1-\pi}$$
+
+Using this single binomial random variable model, we will calculate estimators for $\psi_0$, the true efficacy of the vaccine, and make inference within two frameworks: Likelihood and Bayes. We will calculate 95% confidence interval estimates for $\psi_0$ and conduct a significance test at the $\alpha=0.01$ level for testing $$H_0:\psi_0=0.2 \text{vs. } H_1:\psi_0>0.2$$
 
 ## Likelihood Inference
 Detail the likelihood approach.
@@ -196,4 +210,17 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
 ```
 
 ## Proofs
-If applicable, include detailed mathematical derivations or additional theoretical explanations.
+### Proof A
+Let $X$ denote the number of COVID-19 cases among the $n_1$ patients randomly assigned to the vaccine group and $Y$ denote the number of COVID-19 cases among the $n_2$ patients randomly assigned to the placebo group. Restricting our attention to the total of 170 COVID-19 cases observed in the study, we want to know the PMF of the random variable $T$ that is defined as the count in the vaccine group given this restriction, or $T=X|X+Y=170$.
+
+Since the sample sizes $n_1$ and $n_2$ are large, and the rate that an individual contracts COVID-19 is small, we can assume $$X\approx Pois(n_1\pi_v)\quad\text{ and }\quad Y\approx Pois(n_2\pi_p)$$ 
+where $X$ and $Y$ are independent, since the Poisson distribution approximates a binomial with a large $n$ and small $p$ well, as in this scenario. 
+
+Therefore the PMF of $T$ can be found as follows:
+\begin{align*}
+P(T=t)&=P(X=t|X_Y=n)\quad\quad\quad && t=0,1,\dots,n\\
+&=\frac{P(X=t\cap X+Y=n)}{P(X+Y=n)}\\
+&=\frac{P(X=t\cap Y=n-t)}{P(X+Y=n)}\\
+&=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{Since $X$ and $Y$ are independent}
+\end{align*}
+
