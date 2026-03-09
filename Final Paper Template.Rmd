@@ -51,7 +51,9 @@ Let $n_1$, $\pi_v$ and $n_2$, $\pi_p$ be the number of individuals and probabili
 
 We observe $n_1=17411$ and $n_2=17511$, and since $n_1\approx n_2$, the randomization is 1:1 and we simplify $\pi$ to $$\pi=\frac{\pi_v}{\pi_v+\pi_p}$$
 
-We also observe that our event rates $\pi_v$ and $\pi_p$ are small, so we are will use the ratio between the probabilities, or the relative risk $RR = \frac{\pi_v}{\pi_p}$. Denote the parameter of interest $\psi$ to be the vaccine efficacy defined as $1-RR$:
+We also observe that our event rates $\pi_v$ and $\pi_p$ are small, so we are will use the ratio between the probabilities, or the relative risk $RR = \frac{\pi_v}{\pi_p}$. The estimated relative risk for the COVID-19 vaccine trials is $\widehat{RR} = \frac{\widehat{\pi}_v}{\widehat{\pi}_p} = \frac{0.0004593}{0.0004593} \approx 0.05010$. This means that the risk of contracting COVID-19 in the vaccinated group is around 5\% that of the placebo group. This also means that the vaccine reduces the risk of contracting COVID-19 by around 95\%, which is the vaccine efficacy.
+
+Denote the parameter of interest $\psi$ to be the vaccine efficacy defined as $1-RR$:
 $$\psi = 1-\frac{\pi_v}{\pi_p} = \frac{\pi_p-\pi_a}{\pi_p}$$
 Writing this in terms of the binomial probability $\pi$, we have our parameter of interest for inference:
 $$\psi=\frac{1-2\pi}{1-\pi}$$
