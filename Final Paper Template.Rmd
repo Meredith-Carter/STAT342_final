@@ -70,7 +70,7 @@ $\pi = \frac{1 - \psi}{2 - \psi} \\ L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{1
 We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
 
 ### Significance Test
-We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 \neq 0.3$$.
+We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$.
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$.
 When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
 
@@ -84,6 +84,26 @@ L\left(\psi_0^{null}\right) &= L(0.3) \\
 &= {170 \choose 8} (\frac{1 - 0.3}{2 - 0.3})^8(1 - \frac{1 - 0.3}{2 - 0.3})^{162}\\
 &= 5.62253317 \times 10^{-28}
 \end{align*}
+
+We use the values above to calculate the likelihood ratio statistic $\Lambda$.
+
+\begin{align*}
+\Lambda &= \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}\\
+&= \frac{0.142988121}{5.62253317 \times 10^{-28}}\\
+&= 2.543126 \times 10^{-26}\\
+W &= 2\ln \Lambda\\
+&= 2\ln \left( 2.543126 \times 10^{-26} \right)\\
+&= 121.6012
+\end{align*}
+
+We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
+
+```{r significance_test}
+p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
+p_value
+```
+
+With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
 ## Bayesian Inference
 Detail the Bayesian approach.
