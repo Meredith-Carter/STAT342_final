@@ -72,7 +72,18 @@ We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8}
 ### Significance Test
 We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 \neq 0.3$$.
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$.
-When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. 
+When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
+
+\begin{align*}
+\widehat{\psi}_0^{mle} &= 0.9506173\\
+L\left(\widehat{\psi}_0^{mle}\right) &= L(0.9506173)\\
+&= {170 \choose 8} (\frac{1 - 0.9506173}{2 - 0.9506173})^8(1 - \frac{1 - 0.9506173}{2 - 0.9506173})^{162}\\
+&= 0.142988121\\
+\psi_0^{null} &= 0.3\\
+L\left(\psi_0^{null}\right) &= L(0.3) \\
+&= {170 \choose 8} (\frac{1 - 0.3}{2 - 0.3})^8(1 - \frac{1 - 0.3}{2 - 0.3})^{162}\\
+&= 5.62253317 \times 10^{-28}
+\end{align*}
 
 ## Bayesian Inference
 Detail the Bayesian approach.
