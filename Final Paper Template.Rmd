@@ -16,6 +16,7 @@ library(LearnBayes)
 library(ggplot2)
 library(dplyr)
 library(janitor)
+library(fastR2)
 ```
 
 # Abstract
@@ -72,7 +73,25 @@ We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8}
 ### Significance Test
 We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$.
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$.
-When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
+When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing a graph of the log likelihood function with its quadratic approximation.
+
+```{r second_order_approximation, cache=TRUE, warning=FALSE}
+loglik_binom <- function(pi, n, x) {
+  ifelse((pi <= 0) | (pi >= 1), NA,
+    log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
+  )
+}
+
+ml <- maxLik2(loglik = loglik_binom, start = 0.5, n = 170, x = 8)
+
+plot(ml) +
+  labs(title = "Second Order Approximation to Binomial Log-Likelihood",
+       x = expression(pi))
+```
+
+Our log-likelihood function doesn't closely resemble its quadratic approximation and isn't symmetric around the MLE, which is a reason to concerned about approximating our likelihood ratio with a $\chi_1^2$ distribution. We can verify our results from the p-value from the $\chi^2_1$ distribution by calculating an empirical p-value.
+
+We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
 
 \begin{align*}
 \widehat{\psi}_0^{mle} &= 0.9506173\\
@@ -104,6 +123,39 @@ p_value
 ```
 
 With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
+
+An alternative to using the $\chi^2_1$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
+
+```{r empirical_p_value, cache=TRUE}
+set.seed(414)
+n <- 170
+x <- 8
+psi_null <- 0.3
+pi_null <- (1 - psi_null) / (2 - psi_null)
+pi_mle <- summary(ml)$estimate[1]
+W_obs <- 2 * ((log(choose(n, x)) + x * log(pi_mle) + (n - x) * log(1 - pi_mle)) -
+              (log(choose(n, x)) + x * log(pi_null) + (n - x) * log(1 - pi_null)))
+
+B <- 10000
+w_star <- numeric(B)
+
+for (i in 1:B) {
+  x_star <- rbinom(1, size = n, prob = pi_null)
+  pi_mle_star <- x_star/n
+  
+  w_star[i] <- 2 * ((log(choose(n, x_star)) + 
+                       x_star * log(pi_mle_star) + 
+                       (n - x_star) * log(1 - pi_mle_star)) -
+              (log(choose(n, x_star)) + 
+                 x_star * log(pi_null) + (n - x_star) * log(1 - pi_null)))
+}
+
+hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
+
+p_value_empirical <- sum(w_star > W_obs)/B
+p_value_empirical
+```
+With an empirical p-value of 0, we reach the same conclusion as we did with the p_value we reached assuming the likelihood ration test statistic $W$ follows a $\chi^2_1$ distribution. We reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
 ## Bayesian Inference
 Detail the Bayesian approach.
