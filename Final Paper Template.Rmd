@@ -158,6 +158,8 @@ With an empirical p-value of 0, we reach the same conclusion as we did with the 
 ## Bayesian Inference
 Detail the Bayesian approach.
 
+For our inference, we decided to use the values $P(\psi \geq 0.3) = .01 \Rightarrow P(\pi \leq 7/17) = .05$ and $P(\psi \geq 0) = .1 \Rightarrow P(\pi \leq 1/2) = .1$. We chose these values, since we wanted to be very pessimistic with our initial assumption, so we are absolutely certain that the vaccine works. By doing this, it means that the data must be extremely different from our prior assumptions in order for the vaccine to be proven to be more than 30\% effective, so the FDA will know without a doubt that the vaccine is effective in preventing COVID when compared to the placebo. 
+
 ```{r, meredith_bayes_ab, echo = F}
 ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
             quantile2 = list(p = .1, x = 1/2))
