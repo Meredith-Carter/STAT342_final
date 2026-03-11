@@ -1,7 +1,7 @@
 ---
 title: "Your Paper Title Here"
-author: "Your Name(s)"
-date: Date
+author: "Maggie Lam, Swarnya Srivastava, and Meredith Carter"
+date: 3/6/2026
 output: pdf_document
 urlcolor: blue
 header-includes:
