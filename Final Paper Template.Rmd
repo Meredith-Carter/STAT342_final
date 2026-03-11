@@ -40,7 +40,8 @@ df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411),
                              rep("no", times = 17511)))
 df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
 
-mosaicplot(table(df))
+mosaicplot(table(df), ylab = "COVID", 
+           main = "COVID Status based on Vaccine vs Placebo")
 ```
 
 # Statistical Methods
