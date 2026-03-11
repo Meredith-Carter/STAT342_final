@@ -183,7 +183,7 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
                 args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
                 xlim = c(0, 1)) + 
   stat_function(fun = lik_binom,
-                mapping = aes(color = "likelihood"),
+                mapping = aes(color = "Likelihood"),
                 args = list(n = 170, x = 8),
                 xlim = c(0,1), n = 500) +
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
@@ -243,7 +243,7 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
                 args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
                 xlim = c(0, 1)) + 
   stat_function(fun = lik_binom,
-                mapping = aes(color = "likelihood"),
+                mapping = aes(color = "Likelihood"),
                 args = list(n = 170, x = 8),
                 xlim = c(0,1), n = 500) +
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
