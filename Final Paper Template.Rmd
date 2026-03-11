@@ -168,35 +168,9 @@ ab <- beta.select(quantile1 = list(p = .01, x = 7/17),
 From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
 
 ```{r, meredith_bayes_vis}
-loglik_binom <- function(psi, n, x){
-  log(choose(n, x)) + x * log(1 - psi) - x * log(2 - psi) - (n - x) * log(2 - psi)
+lik_binom <- function(pi, n, x){
+  10^2 * dbinom(x = x, size = n, prob = pi)
 }
-
-ggplot() + 
-  geom_function(fun = dbeta, 
-                mapping = aes(color = "Prior"), 
-                args = list(shape1 = ab[1], shape2 = ab[2]), 
-                xlim = c(0, 1)) + 
-  geom_function(fun = dbeta, 
-                mapping = aes(color = "Posterior"), 
-                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
-                xlim = c(0, 1)) + 
-  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
-       subtitle = "t = 8 observed", 
-       x = expression(psi), 
-       y = "PDF")
-
-ggplot() + 
-  geom_function(fun = loglik_binom, 
-                mapping = aes(color = "Log Likelihood"), 
-                args = list(n = 170, x = 8), 
-                xlim = c(0, 1), 
-                n = 500) +
-  geom_vline(xintercept = 0.9506173) + 
-  labs(title = "Plot of Log Likelihood", 
-       subtitle = "t = 8 observed", 
-       x = expression(psi), 
-       y = "PDF")
 
 ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
   geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
@@ -207,14 +181,13 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
                 mapping = aes(color = "Posterior"), 
                 args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
                 xlim = c(0, 1)) + 
-  geom_function(fun = loglik_binom, 
-                mapping = aes(color = "Log Likelihood"), 
-                args = list(n = 170, x = 8), 
-                xlim = c(0, 1), 
-                n = 500) + 
+  stat_function(fun = lik_binom,
+                mapping = aes(color = "likelihood"),
+                args = list(n = 170, x = 8),
+                xlim = c(0,1), n = 500) +
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
        subtitle = "t = 8 observed", 
-       x = expression(psi), 
+       x = expression(pi), 
        y = "PDF")
 ```
 
@@ -255,35 +228,9 @@ mosaicplot(table(df))
 ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
             quantile2 = list(p = .1, x = 1/2))
 
-loglik_binom <- function(psi, n, x){
-  log(choose(n, x)) + x * log(1 - psi) - x * log(2 - psi) - (n - x) * log(2 - psi)
+lik_binom <- function(pi, n, x){
+  10^2 * dbinom(x = x, size = n, prob = pi)
 }
-
-ggplot() + 
-  geom_function(fun = dbeta, 
-                mapping = aes(color = "Prior"), 
-                args = list(shape1 = ab[1], shape2 = ab[2]), 
-                xlim = c(0, 1)) + 
-  geom_function(fun = dbeta, 
-                mapping = aes(color = "Posterior"), 
-                args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
-                xlim = c(0, 1)) + 
-  labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
-       subtitle = "t = 8 observed", 
-       x = expression(psi), 
-       y = "PDF")
-
-ggplot() + 
-  geom_function(fun = loglik_binom, 
-                mapping = aes(color = "Log Likelihood"), 
-                args = list(n = 170, x = 8), 
-                xlim = c(0, 1), 
-                n = 500) +
-  geom_vline(xintercept = 0.9506173) + 
-  labs(title = "Plot of Log Likelihood", 
-       subtitle = "t = 8 observed", 
-       x = expression(psi), 
-       y = "PDF")
 
 ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
   geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
@@ -294,14 +241,13 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
                 mapping = aes(color = "Posterior"), 
                 args = list(shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]), 
                 xlim = c(0, 1)) + 
-  geom_function(fun = loglik_binom, 
-                mapping = aes(color = "Log Likelihood"), 
-                args = list(n = 170, x = 8), 
-                xlim = c(0, 1), 
-                n = 500) + 
+  stat_function(fun = lik_binom,
+                mapping = aes(color = "likelihood"),
+                args = list(n = 170, x = 8),
+                xlim = c(0,1), n = 500) +
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
        subtitle = "t = 8 observed", 
-       x = expression(psi), 
+       x = expression(pi), 
        y = "PDF")
 ```
 
