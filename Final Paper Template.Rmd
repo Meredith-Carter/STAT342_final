@@ -117,8 +117,8 @@ W &= 2\ln \Lambda\\
 
 We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
 
-```{r significance_test}
-p_value <- pchisq(121.6012, df=1, lower.tail=FALSE, echo=FALSE)
+```{r significance_test, echo=FALSE}
+p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
 p_value
 ```
 
