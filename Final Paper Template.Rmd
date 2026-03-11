@@ -1,6 +1,6 @@
 ---
 title: "Your Paper Title Here"
-author: "Maggie Lam, Swarnya Srivastava, and Meredith Carter"
+author: "Meredith Carter, Maggie Lam, and Swarnya Srivastava"
 date: 3/6/2026
 output: pdf_document
 urlcolor: blue
