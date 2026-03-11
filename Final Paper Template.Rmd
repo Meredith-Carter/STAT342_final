@@ -17,6 +17,7 @@ library(ggplot2)
 library(dplyr)
 library(janitor)
 library(fastR2)
+library(HDInterval)
 ```
 
 # Abstract
@@ -69,8 +70,8 @@ Detail the likelihood approach.
 We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
 
 ### Significance Test
-We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$.
-We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$.
+We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
+We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
 When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing a graph of the log likelihood function with its quadratic approximation.
 
 ```{r second_order_approximation, cache=TRUE, warning=FALSE, echo=FALSE}
@@ -94,11 +95,11 @@ We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{
 \begin{align*}
 \widehat{\psi}_0^{mle} &= 0.9506173\\
 L\left(\widehat{\psi}_0^{mle}\right) &= L(0.9506173)\\
-&= {170 \choose 8} (\frac{1 - 0.9506173}{2 - 0.9506173})^8(1 - \frac{1 - 0.9506173}{2 - 0.9506173})^{162}\\
+&= {170 \choose 8} \left(\frac{1 - 0.9506173}{2 - 0.9506173}\right)^8\left(1 - \frac{1 - 0.9506173}{2 - 0.9506173}\right)^{162}\\
 &= 0.142988121\\
 \psi_0^{null} &= 0.3\\
 L\left(\psi_0^{null}\right) &= L(0.3) \\
-&= {170 \choose 8} (\frac{1 - 0.3}{2 - 0.3})^8(1 - \frac{1 - 0.3}{2 - 0.3})^{162}\\
+&= {170 \choose 8} \left(\frac{1 - 0.3}{2 - 0.3}\right)^8\left(1 - \frac{1 - 0.3}{2 - 0.3}\right)^{162}\\
 &= 5.62253317 \times 10^{-28}
 \end{align*}
 
@@ -215,6 +216,32 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
        x = expression(psi), 
        y = "PDF")
 ```
+
+```{r summarize_pi_posterior_dist, echo=FALSE}
+posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
+cat("posterior median ", round(posterior_median_pi, 4), "\n")
+# equal tail 95% interval
+qbeta(p = c(0.025, 0.975), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
+# 95% HPDI for pi (if asymmetric)
+hdi(qbeta, credMass = 0.95, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
+```
+Our Bayesian model gives us a posterior median of 0.0728 for $\pi$. This means $P(\pi<0.0728\:|\:t)=0.5$. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval for $\pi$ of $(0.0416, 0.1154)$. This means $P(0.0416 < \pi < 0.1154\:|\:t) = 0.95$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.0391, 0.1120)$. This also means $P(0.0391 < \pi < 0.1120\:|\:t) = 0.95$. Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write 
+\begin{align*}
+P(\pi<0.0728\:|\:t)&=0.5\\
+P(\frac{1-\psi}{2-\psi}<0.0728\:|\:t)&=0.5\\
+P(1-\psi<0.0728(2-\psi)|t)&=0.5\\
+P(\psi>\frac{1-2\cdot 0.0728}{1-0.0728}|t)&=0.5\\
+P(\psi>0.9215)&=0.5\\\\
+P(0.0416 < \pi < 0.1154\:|\:t) &= 0.95\\
+P(0.0416 < \frac{1-\psi}{2-\psi} < 0.1154\:|\:t) &= 0.95\\
+P(\frac{1-2\cdot 0.1154}{1-0.1154} < \psi < \frac{1-2\cdot 0.0416}{1-0.0416} \:|\:t) &= 0.95\\
+P(0.8695 < \psi < 0.9566) &= 0.95\\\\
+P(0.0391 < \pi < 0.1120\:|\:t) &= 0.95\\
+P(0.0391 < \frac{1-\psi}{2-\psi} < 0.1120\:|\:t) &= 0.95\\
+P(\frac{1-2\cdot 0.1120}{1-0.1120} < \psi < \frac{1-2\cdot 0.0391}{1-0.0391} \:|\:t) &= 0.95\\
+P(0.8739 < \psi < 0.9593) &= 0.95
+\end{align*}
+The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval of $(0.8695, 0.9566)$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.8739, 0.9593)$.
 
 # Results
 Present your findings. 
