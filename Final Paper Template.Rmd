@@ -66,8 +66,6 @@ Let $T$ be the number from the vaccinated group among the 170 COVID-19 cases. We
 ## Likelihood Inference
 Detail the likelihood approach.
 
-$\pi = \frac{1 - \psi}{2 - \psi} \\ L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162} \\ L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{2 - \psi - 1 + \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162} \\ \ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi)) \\ \frac{d}{d\psi}\ell(\psi) = \frac{-8}{1 - \psi} + \frac{8}{2 - \psi} + \frac{162}{2 - \psi} = \frac{170}{2 - \psi} - \frac{8}{1 - \psi} = 0 \\ 170 - 170 \psi - 16 + 8\psi = 0 \\ 162\psi = 154 \\ \hat\psi^{mle}_0 = 0.9506173$  
-
 We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
 
 ### Significance Test
@@ -235,6 +233,10 @@ Last, F., & Last, F. (2025). *Book Title*. Publisher.
 Smith, A., & Johnson, C. (2023). *Title of the Online Article*. Retrieved from https://www.example.com.
 
 # Appendix
+
+## Likelihood Equation
+
+$\pi = \frac{1 - \psi}{2 - \psi} \\ L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162} \\ L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{2 - \psi - 1 + \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162} \\ \ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi)) \\ \frac{d}{d\psi}\ell(\psi) = \frac{-8}{1 - \psi} + \frac{8}{2 - \psi} + \frac{162}{2 - \psi} = \frac{170}{2 - \psi} - \frac{8}{1 - \psi} = 0 \\ 170 - 170 \psi - 16 + 8\psi = 0 \\ 162\psi = 154 \\ \hat\psi^{mle}_0 = 0.9506173$  
 
 ## Code
 ```{r ref.label = "important_R_code", eval=FALSE}
