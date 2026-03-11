@@ -75,7 +75,7 @@ We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$.
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$.
 When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing a graph of the log likelihood function with its quadratic approximation.
 
-```{r second_order_approximation, cache=TRUE, warning=FALSE}
+```{r second_order_approximation, cache=TRUE, warning=FALSE, echo=FALSE}
 loglik_binom <- function(pi, n, x) {
   ifelse((pi <= 0) | (pi >= 1), NA,
     log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
@@ -118,7 +118,7 @@ W &= 2\ln \Lambda\\
 We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
 
 ```{r significance_test}
-p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
+p_value <- pchisq(121.6012, df=1, lower.tail=FALSE, echo=FALSE)
 p_value
 ```
 
@@ -126,7 +126,7 @@ With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0
 
 An alternative to using the $\chi^2_1$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
 
-```{r empirical_p_value, cache=TRUE}
+```{r empirical_p_value, cache=TRUE, echo=FALSE}
 set.seed(414)
 n <- 170
 x <- 8
