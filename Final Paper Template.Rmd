@@ -137,7 +137,7 @@ W &= 2\ln \Lambda\\
 
 We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
 
-```{r significance_test, echo=FALSE}
+```{r significance_test, echo=FALSE, eval = F}
 p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
 p_value
 ```
@@ -194,8 +194,8 @@ lik_binom <- function(pi, n, x){
   10^2 * dbinom(x = x, size = n, prob = pi)
 }
 
-ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
-  geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
+ggplot() + 
+  geom_function(fun = dbeta, 
                 mapping = aes(color = "Prior"), 
                 args = list(shape1 = ab[1], shape2 = ab[2]), 
                 xlim = c(0, 1)) + 
@@ -217,7 +217,7 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
 
 We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
 Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as $$H_0:\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=0.4118 \text{ vs. } H_1:\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=0.4118$$
-```{r summarize_pi_posterior_dist, echo=FALSE}
+```{r summarize_pi_posterior_dist, echo=FALSE, eval = F}
 posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 cat("posterior median ", round(posterior_median_pi, 4), "\n")
 # equal tail 95% interval
@@ -257,17 +257,18 @@ With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170
 $$[0.9102564, 0.9820359]$$
 
 # Discussion / Conclusion
-Discuss / conclude here.
+
+Through our research, we discovered that the BNT162b2 vaccine reduces the likelihood of getting COVID-19 when compared to the placebo by 95\%, which is reinforced through the 2020 Pfizer study's matching result. This means that the vaccine seems to be effective in reducing COVID-19, which the following results affirm. We decided to use two different methods in order to test the efficacy of the vaccine - namely likelihood inference and Bayesian inference Through likelihood inference, we discovered that with the data given, the most likely probability of the efficacy of the vaccine when compared to the placebo is also 95\%, (with a 95\% confidence interval of approximately 91-92\% to approximately 98-99\%) which reaffirms our prior conclusion. Using this method, we calculated a p-value of $2.8*10^{-9}$, meaning we would reject the null hypothesis and conclude that our vaccine is more than 30\% effective and should be approved by the FDA. Similarly, when using Bayesian inference, we used extremely pessimistic prior assumptions in order to prove without a doubt that the vaccine is successful if it does in fact work. Through this method, we found that the most likely effectiveness of the vaccine is 92\%. In addition to this, we found a 95\% confidence interval of 87\% to 96\%, which means we would reject our null hypothesis with a p-value of \textcolor{red}{insert p-value here}. From these results, we can see that our conclusions match those of the Pfizer study, and both recommend using the vaccine to prevent the spread of COVID-19, due to its efficacy of over 30\%. 
 
 # Bibliography
 
-Brown, B. (2024). *Lecture Title*. Lecture slides, Course Name, University Name.
+Grove, R. (2026). *Maximum Likelihood Estimation, Likelihood Inference, Bayes Prior/Posterior, Bayes Point/Inferval Estimation*. Lecture slides, STAT 342, University of Washington
 
 Doe, J. (2020). Title of the Paper. *Journal Name*, 12(3), 45-67.
 
 Last, F., & Last, F. (2025). *Book Title*. Publisher.
 
-Smith, A., & Johnson, C. (2023). *Title of the Online Article*. Retrieved from https://www.example.com.
+Fernando P. Polack, M.D., et al. (2020). *Safety and Efficacy of the BNT162b2 mRNA Covid-19 Vaccine*. Retrieved from https://www.nejm.org/doi/full/10.1056/nejmoa2034577.
 
 # Appendix
 
@@ -294,7 +295,7 @@ Then finding $I(\psi)$:
 
 
 ## Code
-```{r ref.label = "important_R_code", eval=FALSE}
+```{r ref.label = "important_R_code", eval = TRUE}
 df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411), 
                                rep("placebo", times = 162 + 17511)), 
                  "covid" = c(rep("yes", times = 8), 
@@ -305,6 +306,49 @@ df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_n
 
 mosaicplot(table(df))
 
+loglik_binom <- function(pi, n, x) {
+  ifelse((pi <= 0) | (pi >= 1), NA,
+    log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
+  )
+}
+
+ml <- maxLik2(loglik = loglik_binom, start = 0.5, n = 170, x = 8)
+
+plot(ml) +
+  labs(title = "Second Order Approximation to Binomial Log-Likelihood",
+       x = expression(pi))
+
+p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
+p_value
+
+set.seed(414)
+n <- 170
+x <- 8
+psi_null <- 0.3
+pi_null <- (1 - psi_null) / (2 - psi_null)
+pi_mle <- summary(ml)$estimate[1]
+W_obs <- 2 * ((log(choose(n, x)) + x * log(pi_mle) + (n - x) * log(1 - pi_mle)) -
+              (log(choose(n, x)) + x * log(pi_null) + (n - x) * log(1 - pi_null)))
+
+B <- 10000
+w_star <- numeric(B)
+
+for (i in 1:B) {
+  x_star <- rbinom(1, size = n, prob = pi_null)
+  pi_mle_star <- x_star/n
+  
+  w_star[i] <- 2 * ((log(choose(n, x_star)) + 
+                       x_star * log(pi_mle_star) + 
+                       (n - x_star) * log(1 - pi_mle_star)) -
+              (log(choose(n, x_star)) + 
+                 x_star * log(pi_null) + (n - x_star) * log(1 - pi_null)))
+}
+
+hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
+
+p_value_empirical <- sum(w_star > W_obs)/B
+p_value_empirical
+
 ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
             quantile2 = list(p = .1, x = 1/2))
 
@@ -312,8 +356,8 @@ lik_binom <- function(pi, n, x){
   10^2 * dbinom(x = x, size = n, prob = pi)
 }
 
-ggplot() + # Icky for some reason, but I think this is what we were supposed to do?
-  geom_function(fun = dbeta, # I will look at this again later and see if I can find the error, because something is really wrong
+ggplot() + 
+  geom_function(fun = dbeta, 
                 mapping = aes(color = "Prior"), 
                 args = list(shape1 = ab[1], shape2 = ab[2]), 
                 xlim = c(0, 1)) + 
@@ -329,6 +373,12 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
        subtitle = "t = 8 observed", 
        x = expression(pi), 
        y = "PDF")
+posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
+cat("posterior median ", round(posterior_median_pi, 4), "\n")
+# equal tail 95% interval
+qbeta(p = c(0.025, 0.975), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
+# 95% HPDI for pi (if asymmetric)
+hdi(qbeta, credMass = 0.95, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 ```
 
 ``` {r ref.label = "mle_ci", eval = TRUE}
