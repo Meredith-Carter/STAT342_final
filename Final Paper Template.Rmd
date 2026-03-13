@@ -61,7 +61,7 @@ $$\psi = 1-\frac{\pi_v}{\pi_p} = \frac{\pi_p-\pi_a}{\pi_p}$$
 Writing this in terms of the binomial probability $\pi$, we have our parameter of interest for inference:
 $$\psi=\frac{1-2\pi}{1-\pi}$$
 
-Using this single binomial random variable model, we will calculate estimators for $\psi_0$, the true efficacy of the vaccine, and make inference within two frameworks: Likelihood and Bayes. We will calculate 95% confidence interval estimates for $\psi_0$ and conduct a significance test at the $\alpha=0.01$ level for testing $$H_0:\psi_0=0.2 \text{vs. } H_1:\psi_0>0.2$$
+Using this single binomial random variable model, we will calculate estimators for $\psi_0$, the true efficacy of the vaccine, and make inference within two frameworks: Likelihood and Bayes. We will calculate 95% confidence interval estimates for $\psi_0$ and conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
 
 Let $T$ be the number from the vaccinated group among the 170 COVID-19 cases. We assume that $T \sim Binom(170, \pi)$ and we observed $t=8$. 
 
@@ -122,7 +122,7 @@ p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
 p_value
 ```
 
-With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
+With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
 An alternative to using the $\chi^2_1$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
 
@@ -193,6 +193,10 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
        y = "PDF")
 ```
 
+### Significance Test
+
+We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
+Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as $$H_0:\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=0.4118 \text{ vs. } H_1:\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=0.4118$$
 ```{r summarize_pi_posterior_dist, echo=FALSE}
 posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 cat("posterior median ", round(posterior_median_pi, 4), "\n")
@@ -201,15 +205,15 @@ qbeta(p = c(0.025, 0.975), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 # 95% HPDI for pi (if asymmetric)
 hdi(qbeta, credMass = 0.95, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 ```
-Our Bayesian model gives us a posterior median of 0.0728 for $\pi$. This means $P(\pi<0.0728\:|\:t)=0.5$. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval for $\pi$ of $(0.0416, 0.1154)$. This means $P(0.0416 < \pi < 0.1154\:|\:t) = 0.95$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.0391, 0.1120)$. This also means $P(0.0391 < \pi < 0.1120\:|\:t) = 0.95$. Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write 
+Our Bayesian model gives us a posterior median of 0.0728 for $\pi$. This means $P(\pi<0.0728\:|\:t)=0.5$. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval for $\pi$ of $(0.0416, 0.1154)$. This means $P(0.0416 < \pi < 0.1154\:|\:t) = 0.95$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.0391, 0.1120)$. This also means $P(0.0391 < \pi < 0.1120\:|\:t) = 0.95$. Neither of our two 95\% confidence intervals for $\pi$ contain 0.4118, so we can reject the null hypothesis $H_0: \pi_0=0.4118$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \pi_0 < 0.4118$. Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write 
 \begin{align*}
 P(\pi<0.0728\:|\:t)&=0.5\\
-P(\frac{1-\psi}{2-\psi}<0.0728\:|\:t)&=0.5\\
+P\left(\frac{1-\psi}{2-\psi}<0.0728\:|\:t \right)&=0.5\\
 P(1-\psi<0.0728(2-\psi)|t)&=0.5\\
 P\left(\psi>\frac{1-2\cdot 0.0728}{1-0.0728}|t\right)&=0.5\\
 P(\psi>0.9215)&=0.5\\\\
 P(0.0416 < \pi < 0.1154\:|\:t) &= 0.95\\
-P(0.0416 < \frac{1-\psi}{2-\psi} < 0.1154\:|\:t) &= 0.95\\
+P\left(0.0416 < \frac{1-\psi}{2-\psi} < 0.1154\:|\:t \right) &= 0.95\\
 P\left(\frac{1-2\cdot 0.1154}{1-0.1154} < \psi < \frac{1-2\cdot 0.0416}{1-0.0416} \:|\:t\right) &= 0.95\\
 P(0.8695 < \psi < 0.9566) &= 0.95\\\\
 P(0.0391 < \pi < 0.1120\:|\:t) &= 0.95\\
@@ -217,7 +221,7 @@ P(0.0391 < \frac{1-\psi}{2-\psi} < 0.1120\:|\:t) &= 0.95\\
 P\left(\frac{1-2\cdot 0.1120}{1-0.1120} < \psi < \frac{1-2\cdot 0.0391}{1-0.0391} \:|\:t\right) &= 0.95\\
 P(0.8739 < \psi < 0.9593) &= 0.95
 \end{align*}
-The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval of $(0.8695, 0.9566)$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.8739, 0.9593)$.
+The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval of $(0.8695, 0.9566)$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.8739, 0.9593)$. Neither of our 95\% confidence intervals for $\psi$ include 0.3, so we can reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$, echoing the conclusion of our significance test for $\pi$.
 
 # Results
 Present your findings. 
