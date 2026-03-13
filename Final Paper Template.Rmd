@@ -419,7 +419,7 @@ ggplot(data = boot_df,
         subtitle=expression(hat(pi)[0]))
 
 
-lower <- quantile(boot_df$pi_hat, 0.05)
+lower <- quantile(boot_df$pi_hat, 0.025)
 upper <- quantile(boot_df$pi_hat, 0.975)
 
 psi_lower <- (1-2*upper[[1]]) / (1-upper[[1]])
