@@ -63,17 +63,18 @@ $$\psi=\frac{1-2\pi}{1-\pi}$$
 
 Using this single binomial random variable model, we will calculate estimators for $\psi_0$, the true efficacy of the vaccine, and make inference within two frameworks: Likelihood and Bayes. We will calculate 95% confidence interval estimates for $\psi_0$ and conduct a significance test at the $\alpha=0.01$ level for testing $$H_0:\psi_0=0.2 \text{vs. } H_1:\psi_0>0.2$$
 
-Let $T$ be the number from the vaccinated group among the 170 COVID-19 cases. We assume that $T \sim Binom(170, \pi)$ and we observed $t=8$. 
+Altogether, $T$ denotes the number from the vaccinated group among the 170 COVID-19 cases. We assume that $T \sim Binom(170, \pi)$, and we observe $t=8$. 
 
 ## Likelihood Inference
 Detail the likelihood approach.
 
 We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
 
-### Significance Test
-We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
-We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
-When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing a graph of the log likelihood function with its quadratic approximation.
+### Confidence Interval
+We will construct 95\% confidence intervals for $\psi_0$ in 2 ways: using a large sample confidence interval estimate and a parametric bootstrap percentile interval.
+
+#### Large sample confidence interval estimate
+For our Binomial model $T$, we assume 2 regularity conditions. First, we assume that the possible values of $t$ do not depend on our parameter $\psi$, and second, that the true value of the parameter does not fall on a boundary. These conditions can be verified by plotting the log-likelihood function of $\psi$ along with the second-order Taylor approximation around the MLE and checking if the second-order Taylor series well approximates our log-likelihood function.
 
 ```{r second_order_approximation, cache=TRUE, warning=FALSE, echo=FALSE}
 loglik_binom <- function(pi, n, x) {
@@ -88,6 +89,25 @@ plot(ml) +
   labs(title = "Second Order Approximation to Binomial Log-Likelihood",
        x = expression(pi))
 ```
+
+Based on the figure, we can assume these regularity conditions hold. And so we can say $$\hat\psi_0^{mle}\approx Norm\left(\psi_0, \sqrt{\frac{1}{I(\psi_0)}}\right)$$ where $I(\psi_0)$ is the expected Fisher information defined as (see appendix B):
+
+$$I(\psi_0)=nE\left[-\frac{d^2}{d\psi^2}\ln(f_\psi(X))\right]_{\psi=\psi_0}=\frac{n}{(1-\psi)(2-\psi)^2}$$
+
+Then we can then calculate a $100(1-0.05)\%$ large sample confidence interval for $\psi_0$ with the formula: 
+$$\hat\psi_0^{mle} \pm z_{\alpha/2}\sqrt{\frac{1}{I(\hat\psi_0^{mle})}}$$
+
+#### Parametric Bootstrap Percentile Interval
+
+With this approach, we will assume samples denoted as $T^{*}$ are drawn from the binomial distribution $T\sim Binom(170, \hat\pi^{mle})$. For each generated sample, we can calculate a bootstrapped estimate of $\hat\pi$, $\hat\pi^{*}=\frac{T^{*}}{n}$. Then, calculate a bootstrap estimate of $\psi$ using the known relationship between $\psi$ and $\pi$, $$\hat\psi^*=\frac{1-2\hat\pi^{*}}{1-\hat\pi^{*}}=\frac{1-2\frac{T^{*}}{n}}{1-\frac{T^{*}}{n}}$$
+
+We will generate 1000 boostrap estimates of $\hat\psi$, and find the 2.5th and 97.5th percentiles of the distribution of these generated estimates to get a $100(1-0.05)\%$ confidence interval for $\psi_0$.
+
+
+### Significance Test
+We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
+We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
+When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in figure [LABEL].
 
 Our log-likelihood function doesn't closely resemble its quadratic approximation and isn't symmetric around the MLE, which is a reason to concerned about approximating our likelihood ratio with a $\chi_1^2$ distribution. We can verify our results from the p-value from the $\chi^2_1$ distribution by calculating an empirical p-value.
 
@@ -220,7 +240,17 @@ P(0.8739 < \psi < 0.9593) &= 0.95
 The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval of $(0.8695, 0.9566)$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.8739, 0.9593)$.
 
 # Results
-Present your findings. 
+<!-- TODO: move likelihood + bayesian significance test results here -->
+### Likelihood Inference
+
+#### Confidence Intervals
+With the large sample estimate confidence interval, we have our expected Fisher Information for $\hat\psi^{mle}$: $$I(\hat\psi_0^{mle})=\frac{n}{(1-\hat\psi^{mle})(2-\hat\psi^{mle})^2}$$
+which we can then plug in our observed value of $n=170$ and calculated value of $\hat\psi^{mle}=0.9506173$.
+
+Then our 95\% confidence interval is $$0.9506173 \pm 1.96\sqrt{\frac{1}{I(\hat\psi_0^{mle})}}$$ where 1.96 is the number that cuts off an area of $0.05/2$ to the right under the standard normal curve. So our large sample confidence interval for $\psi_0$ is (see code section in appendix): $$[0.9155621, 0.9856725]$$
+
+With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170}$ and simulate 1000 samples of $T$ from our binomial distribution. We can see the bootstrapped sampling distribution of $\pi_hat$: and then transform to find percentiles to give us a 95\% confidence interval for $\psi_0$ (see mle_bootstrap code in appendix):
+$$[0.9102564, 0.9820359]$$
 
 # Discussion / Conclusion
 Discuss / conclude here.
@@ -237,9 +267,27 @@ Smith, A., & Johnson, C. (2023). *Title of the Online Article*. Retrieved from h
 
 # Appendix
 
-## Likelihood Equation
+## Appendix A: Likelihood Equation
 
 $\pi = \frac{1 - \psi}{2 - \psi} \\ L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162} \\ L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{2 - \psi - 1 + \psi}{2 - \psi})^{162} = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162} \\ \ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi)) \\ \frac{d}{d\psi}\ell(\psi) = \frac{-8}{1 - \psi} + \frac{8}{2 - \psi} + \frac{162}{2 - \psi} = \frac{170}{2 - \psi} - \frac{8}{1 - \psi} = 0 \\ 170 - 170 \psi - 16 + 8\psi = 0 \\ 162\psi = 154 \\ \hat\psi^{mle}_0 = 0.9506173$  
+
+## Appendix B: Expected Fisher Information
+\begin{gather*}
+\frac{d}{d\psi}\ell(\psi) = \frac{n}{2 - \psi} - \frac{T}{1 - \psi}\\
+\frac{d}{d^2\psi}\ell(\psi)= \frac{n}{(2 - \psi)^2} - \frac{T}{(1 - \psi)^2}
+\end{gather*}
+Then finding $I(\psi)$:
+\begin{align*}
+  I(\psi_0)&=nE\left[-\frac{d^2}{d\psi^2}\ln(f_\psi(X))\right]_{\psi=\psi_0}\\
+  &= E\left[-\frac{d}{d^2\psi}\ell(\psi)\right]_{\psi=\psi_0}\\
+  &= E\left[\frac{-n}{(2 - \psi)^2} + \frac{T}{(1 - \psi)^2}\right]_{\psi=\psi_0}\\
+   &= E\left[\frac{-n}{(2 - \psi_0)^2} + \frac{T}{(1 - \psi_0)^2}\right]\\
+   &= E\left[\frac{T}{(1 - \psi_0)^2}\right] - \frac{n}{(2 - \psi_0)^2} \\
+   &= \frac{n\pi}{(1 - \psi_0)^2}- \frac{n}{(2 - \psi_0)^2} \quad&&\text{Expected value of binom}\\
+   &= \frac{n\left(\frac{1-\psi}{2-\psi}\right)}{(1 - \psi_0)^2} - \frac{n}{(2 - \psi_0)^2} \\
+   &= \frac{n}{(1-\psi)(2-\psi)^2}
+\end{align*}
+
 
 ## Code
 ```{r ref.label = "important_R_code", eval=FALSE}
@@ -277,6 +325,45 @@ ggplot() + # Icky for some reason, but I think this is what we were supposed to 
        subtitle = "t = 8 observed", 
        x = expression(pi), 
        y = "PDF")
+```
+
+``` {r ref.label = "mle_ci", eval = TRUE}
+psi_hat <- 0.9506173
+z <- 1.96
+n <- 170
+
+i <- n / ((1-psi_hat) * (2-psi_hat)^2)
+lower <- psi_hat - z * sqrt(1/i)
+upper <- psi_hat + z * sqrt(1/i)
+
+lower
+upper
+```
+
+```{r label="mle_bootstrap", eval=TRUE}
+B = 1000
+set.seed(8383)
+
+boot_df <- tibble(
+  pi_hat = replicate(n = B,
+                     expr = rbinom(1, 170, 8/170) / 170)
+)
+
+ggplot(data = boot_df,
+       mapping = aes(x=pi_hat)) +
+  geom_histogram(binwidth = 0.01) +
+  labs (title = "Bootstrapped sampling distribution of ",
+        subtitle=expression(hat(pi)[0]))
+
+
+lower <- quantile(boot_df$pi_hat, 0.025)
+upper <- quantile(boot_df$pi_hat, 0.975)
+
+psi_lower <- (1-2*upper[[1]]) / (1-upper[[1]])
+psi_upper <- (1-2*lower[[1]]) / (1-lower[[1]])
+
+psi_lower
+psi_upper
 ```
 
 ## Proofs
