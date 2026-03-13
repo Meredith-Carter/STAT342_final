@@ -262,7 +262,7 @@ which we can then plug in our observed value of $n=170$ and calculated value of 
 
 Then our 95\% confidence interval is $$0.9506173 \pm 1.96\sqrt{\frac{1}{I(\hat\psi_0^{mle})}}$$ where 1.96 is the number that cuts off an area of $0.05/2$ to the right under the standard normal curve. So our large sample confidence interval for $\psi_0$ is (see code section in appendix): $$[0.9155621, 0.9856725]$$
 
-With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170}$ and simulate 1000 samples of $T$ from our binomial distribution. We can see the bootstrapped sampling distribution of $\pi_hat$: and then transform to find percentiles to give us a 95\% confidence interval for $\psi_0$ (see mle_bootstrap code in appendix):
+With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170}$ and simulate 1000 samples of $T$ from the binomial distribution. We can see the bootstrapped sampling distribution of $\pi_{hat}$, and then transform to find percentiles to give us a 95\% confidence interval for $\psi_0$ (see mle_bootstrap code in appendix):
 $$[0.9102564, 0.9820359]$$
 
 # Discussion / Conclusion
@@ -404,12 +404,12 @@ upper
 ```
 
 ```{r label="mle_bootstrap", eval=TRUE}
-B = 1000
-set.seed(8383)
+B = 10000
+set.seed(414)
 
 boot_df <- tibble(
   pi_hat = replicate(n = B,
-                     expr = rbinom(1, 170, 8/170) / 170)
+                     expr = rbinom(n = 1, size = 170, prob = 8/170) / 170)
 )
 
 ggplot(data = boot_df,
@@ -419,7 +419,7 @@ ggplot(data = boot_df,
         subtitle=expression(hat(pi)[0]))
 
 
-lower <- quantile(boot_df$pi_hat, 0.025)
+lower <- quantile(boot_df$pi_hat, 0.05)
 upper <- quantile(boot_df$pi_hat, 0.975)
 
 psi_lower <- (1-2*upper[[1]]) / (1-upper[[1]])
@@ -441,6 +441,19 @@ Therefore the PMF of $T$ can be found as follows:
 P(T=t)&=P(X=t|X_Y=n)\quad\quad\quad && t=0,1,\dots,n\\
 &=\frac{P(X=t\cap X+Y=n)}{P(X+Y=n)}\\
 &=\frac{P(X=t\cap Y=n-t)}{P(X+Y=n)}\\
-&=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{Since $X$ and $Y$ are independent}
+&=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{$X$ and $Y$ are independent}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot P(Y=n-t)}{P(X+Y=n)}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!}}{P(X+Y=n)}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!}}{\frac{e^{(-(n_2\pi_p+n_1\pi_v))}{(n_2\pi_p+n_1\pi_v)}^{n}}{n!}}\\
+&=\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!} \cdot  \frac{n!}{e^{(-(n_2\pi_p+n_1\pi_v))}{(n_2\pi_p+n_1\pi_v)}^{n}}\\
+&=\frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{t!(n-t)!} \cdot \frac{n!}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\frac{n!}{t!(n-t)!}\cdot \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\binom{n}{t} \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\binom{n}{t} \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^t(n_2\pi_p+n_1\pi_v)^{n-t}}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(\frac{n_2\pi_p}{n_1\pi_v+n_2\pi_p} \right)^{n-t}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(\frac{n_1\pi_v-n_1\pi_v+n_2\pi_p}{n_1\pi_v+n_2\pi_p} \right)^{n-t}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(1-\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^{n-t}
 \end{align*}
+This is precisely the PMF for a Binomial distribution. Therefore, we have shown that 
+$$T\sim Binom(n, \pi=\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p})$$
 
