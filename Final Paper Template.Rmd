@@ -216,10 +216,6 @@ ggplot() +
 ### Confidence Interval
 
 <<<<<<< HEAD
-```{r summarize_pi_posterior_dist, echo=FALSE}
-=======
-We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
-Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as $$H_0:\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=0.4118 \text{ vs. } H_1:\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=0.4118$$
 ```{r summarize_pi_posterior_dist, echo=FALSE, eval = F}
 >>>>>>> 84ed48717c163abdb98516f43644de57fef813b0
 posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
@@ -250,7 +246,13 @@ The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of
 ### Significance Test
 
 We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
-Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as $$H_0:\psi_0=\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=\frac{7}{17} \text{ vs. } H_1:\psi_0=\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=\frac{7}{17}$$
+Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as 
+\begin{center}
+H_0:\psi_0=\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=\frac{7}{17} \\ 
+\text{ vs. } \\
+H_1:\psi_0=\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=\frac{7}{17}
+\end{center}
+
 ```{r bayes_sig_test, echo=FALSE}
 pbeta(q = (7/17), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2], lower.tail=FALSE)
 ```
