@@ -189,7 +189,7 @@ ab <- beta.select(quantile1 = list(p = .01, x = 7/17),
 
 From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
 
-```{r, meredith_bayes_vis}
+```{r, meredith_bayes_vis, echo = F}
 lik_binom <- function(pi, n, x){
   10^2 * dbinom(x = x, size = n, prob = pi)
 }
