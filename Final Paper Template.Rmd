@@ -2,6 +2,7 @@
 title: "Your Paper Title Here"
 author: "Meredith Carter, Maggie Lam, and Swarnya Srivastava"
 date: 3/6/2026
+geometry: margin=0.5in
 output: pdf_document
 urlcolor: blue
 header-includes:
@@ -29,7 +30,7 @@ Write your abstract here.
 \newpage
 
 # Introduction / Background
-Provide an introduction with background information.
+Tens of millions of people fell victim to COVID-19 in a global pandemic beginning in 2020. Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart. Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below.
 
 ```{r label="important_R_code", eval=TRUE, echo=FALSE}
 # You can reference your code in the appendix (sample here).
@@ -54,10 +55,10 @@ Let $n_1$, $\pi_v$ and $n_2$, $\pi_p$ be the number of individuals and probabili
 
 We observe $n_1=17411$ and $n_2=17511$, and since $n_1\approx n_2$, the randomization is 1:1 and we simplify $\pi$ to $$\pi=\frac{\pi_v}{\pi_v+\pi_p}$$
 
-We also observe that our event rates $\pi_v$ and $\pi_p$ are small, so we are will use the ratio between the probabilities, or the relative risk $RR = \frac{\pi_v}{\pi_p}$. The estimated relative risk for the COVID-19 vaccine trials is $\widehat{RR} = \frac{\widehat{\pi}_v}{\widehat{\pi}_p} = \frac{0.0004593}{0.0004593} \approx 0.05010$. This means that the risk of contracting COVID-19 in the vaccinated group is around 5\% that of the placebo group. This also means that the vaccine reduces the risk of contracting COVID-19 by around 95\%, which is the vaccine efficacy.
+We also observe that our event rates $\pi_v$ and $\pi_p$ are small, so we are will use the ratio between the probabilities, or the relative risk $RR = \frac{\pi_v}{\pi_p}$. The estimated relative risk for the COVID-19 vaccine trials is $\widehat{RR} = \frac{\widehat{\pi}_v}{\widehat{\pi}_p} \approx 0.05010$. This means that the risk of contracting COVID-19 in the vaccinated group is around 5\% that of the placebo group. This also means that the vaccine reduces the risk of contracting COVID-19 by around 95\%, which is the vaccine efficacy.
 
 Denote the parameter of interest $\psi$ to be the vaccine efficacy defined as $1-RR$:
-$$\psi = 1-\frac{\pi_v}{\pi_p} = \frac{\pi_p-\pi_a}{\pi_p}$$
+$$\psi = 1-\frac{\pi_v}{\pi_p} = \frac{\pi_p-\pi_v}{\pi_p}$$
 Writing this in terms of the binomial probability $\pi$, we have our parameter of interest for inference:
 $$\psi=\frac{1-2\pi}{1-\pi}$$
 
@@ -68,7 +69,7 @@ Altogether, $T$ denotes the number from the vaccinated group among the 170 COVID
 ## Likelihood Inference
 Detail the likelihood approach.
 
-We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$. From this, we can see that $\hat\psi^{mle}_0 = 0.9506173$, which would be a global maximum. 
+We know that the likelihood function for $\pi$ will be $L(\pi) = {170 \choose 8} (\pi)^8(1 - \pi)^{162}$, which means the likelihood function of $\psi$ would be $L^*(\psi) = {170 \choose 8}(\frac{1 - \psi}{2 - \psi})^8(\frac{1}{2 - \psi})^{162}$ or $$\ell(\psi) = ln({170 \choose 8}) +  8(ln(1 - \psi) - ln(2 - \psi)) + 162(ln(1) - ln(2 - \psi))$$ From there we can calculate $\hat\psi^{mle}_0$.
 
 ### Confidence Interval
 We will construct 95\% confidence intervals for $\psi_0$ in 2 ways: using a large sample confidence interval estimate and a parametric bootstrap percentile interval.
@@ -76,7 +77,7 @@ We will construct 95\% confidence intervals for $\psi_0$ in 2 ways: using a larg
 #### Large sample confidence interval estimate
 For our Binomial model $T$, we assume 2 regularity conditions. First, we assume that the possible values of $t$ do not depend on our parameter $\psi$, and second, that the true value of the parameter does not fall on a boundary. These conditions can be verified by plotting the log-likelihood function of $\psi$ along with the second-order Taylor approximation around the MLE and checking if the second-order Taylor series well approximates our log-likelihood function.
 
-```{r second_order_approximation, cache=TRUE, warning=FALSE, echo=FALSE}
+```{r second_order_approximation,  out.width="50%", fig.pos='H', fig.align="center",fig.cache=TRUE, warning=FALSE, echo=FALSE}
 loglik_binom <- function(pi, n, x) {
   ifelse((pi <= 0) | (pi >= 1), NA,
     log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
@@ -107,75 +108,13 @@ We will generate 1000 boostrap estimates of $\hat\psi$, and find the 2.5th and 9
 ### Significance Test
 We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
+<<<<<<< HEAD
 When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$ as $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in figure [LABEL].
+=======
+When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in the large sample confidence interval estimate section. Assuming the regularity conditions hold, we will calculate $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$, and then find the likelihood ratio statistic $\Lambda$ to compare against the $\chi^2_1$ distribution to calculate the p-value.
+>>>>>>> 337b1db34a8a934d6e294784919bfe62570841e1
 
-Our log-likelihood function doesn't closely resemble its quadratic approximation and isn't symmetric around the MLE, which is a reason to concerned about approximating our likelihood ratio with a $\chi_1^2$ distribution. We can verify our results from the p-value from the $\chi^2_1$ distribution by calculating an empirical p-value.
-
-We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
-
-\begin{align*}
-\widehat{\psi}_0^{mle} &= 0.9506173\\
-L\left(\widehat{\psi}_0^{mle}\right) &= L(0.9506173)\\
-&= {170 \choose 8} \left(\frac{1 - 0.9506173}{2 - 0.9506173}\right)^8\left(1 - \frac{1 - 0.9506173}{2 - 0.9506173}\right)^{162}\\
-&= 0.142988121\\
-\psi_0^{null} &= 0.3\\
-L\left(\psi_0^{null}\right) &= L(0.3) \\
-&= {170 \choose 8} \left(\frac{1 - 0.3}{2 - 0.3}\right)^8\left(1 - \frac{1 - 0.3}{2 - 0.3}\right)^{162}\\
-&= 5.62253317 \times 10^{-28}
-\end{align*}
-
-We use the values above to calculate the likelihood ratio statistic $\Lambda$.
-
-\begin{align*}
-\Lambda &= \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}\\
-&= \frac{0.142988121}{5.62253317 \times 10^{-28}}\\
-&= 2.543126 \times 10^{-26}\\
-W &= 2\ln \Lambda\\
-&= 2\ln \left( 2.543126 \times 10^{-26} \right)\\
-&= 121.6012
-\end{align*}
-
-We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
-
-```{r significance_test, echo=FALSE, eval = F}
-p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
-p_value
-```
-
-With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
-
-An alternative to using the $\chi^2_1$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
-
-```{r empirical_p_value, cache=TRUE, echo=FALSE}
-set.seed(414)
-n <- 170
-x <- 8
-psi_null <- 0.3
-pi_null <- (1 - psi_null) / (2 - psi_null)
-pi_mle <- summary(ml)$estimate[1]
-W_obs <- 2 * ((log(choose(n, x)) + x * log(pi_mle) + (n - x) * log(1 - pi_mle)) -
-              (log(choose(n, x)) + x * log(pi_null) + (n - x) * log(1 - pi_null)))
-
-B <- 10000
-w_star <- numeric(B)
-
-for (i in 1:B) {
-  x_star <- rbinom(1, size = n, prob = pi_null)
-  pi_mle_star <- x_star/n
-  
-  w_star[i] <- 2 * ((log(choose(n, x_star)) + 
-                       x_star * log(pi_mle_star) + 
-                       (n - x_star) * log(1 - pi_mle_star)) -
-              (log(choose(n, x_star)) + 
-                 x_star * log(pi_null) + (n - x_star) * log(1 - pi_null)))
-}
-
-hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
-
-p_value_empirical <- sum(w_star > W_obs)/B
-p_value_empirical
-```
-With an empirical p-value of 0, we reach the same conclusion as we did with the p_value we reached assuming the likelihood ration test statistic $W$ follows a $\chi^2_1$ distribution. We reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
+An alternative to using the $\chi_1^2$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
 
 ## Bayesian Inference
 Detail the Bayesian approach.
@@ -215,7 +154,98 @@ ggplot() +
 
 ### Confidence Interval
 
+Using the Bayesian models defined, we will find a posterior median for $\pi$. Then assuming the posterior distribution of $\pi$ is symmetric, we can then find a 95\% confidence interval for $\pi$. From there, we will utilize the relationship between $\pi$ and $\psi$, $\pi=\frac{1-\psi}{2-\psi}$, to get our 95\% confidence interval for $\psi$.
+
+### Significance Test
+
+We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
+Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as 
+$H_0: \psi_0=\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=\frac{7}{17}$ vs. $H_1: \psi_0=\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=\frac{7}{17}$.
+
+# Results
+### Likelihood Inference
+Using the the log likelihood equation, we have that $\hat\psi^{mle}_0 = 0.9506173$ (see appendix A). From our sample, we also see that $\hat\pi^{mle}_0=\frac{8}{170}$.
+
+#### Confidence Intervals
+With the large sample estimate confidence interval, we have our expected Fisher Information for $\hat\psi^{mle}$: $$I(\hat\psi_0^{mle})=\frac{n}{(1-\hat\psi^{mle})(2-\hat\psi^{mle})^2}$$
+which we can then plug in our observed value of $n=170$ and calculated value of $\hat\psi^{mle}=0.9506173$.
+
+Then our 95\% confidence interval is $$0.9506173 \pm 1.96\sqrt{\frac{1}{I(\hat\psi_0^{mle})}}$$ where 1.96 is the number that cuts off an area of $0.05/2$ to the right under the standard normal curve. So our large sample confidence interval for $\psi_0$ is (see code section in appendix): $$[0.9155621, 0.9856725]$$
+
+With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170}$ and simulate 10000 samples of $T$ from the binomial distribution. We can see the bootstrapped sampling distribution of $\pi_{hat}$, and then transform to find percentiles to give us a 95\% confidence interval for $\psi_0$ (see mle_bootstrap code in appendix):
+$$[0.9102564, 0.9820359]$$
+So with the large sample estimate, we are 95\% confident that the true vaccine efficacy lies between $[0.9155621, 0.9856725]$, and we the parametric boostrap method, we are 95\% confident that the true vaccine efficacy lies between $[0.9102564, 0.9820359]$.
+
+#### Hypothesis Testing
+We know that $L(\psi) = {170 \choose 8} (\frac{1 - \psi}{2 - \psi})^8(1 - \frac{1 - \psi}{2 - \psi})^{162}$, so we get the following values for $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$:
+
+\begin{align*}
+\widehat{\psi}_0^{mle} &= 0.9506173\\
+L\left(\widehat{\psi}_0^{mle}\right) &= L(0.9506173)\\
+&= {170 \choose 8} \left(\frac{1 - 0.9506173}{2 - 0.9506173}\right)^8\left(1 - \frac{1 - 0.9506173}{2 - 0.9506173}\right)^{162}\\
+&= 0.142988121\\
+\psi_0^{null} &= 0.3\\
+L\left(\psi_0^{null}\right) &= L(0.3) \\
+&= {170 \choose 8} \left(\frac{1 - 0.3}{2 - 0.3}\right)^8\left(1 - \frac{1 - 0.3}{2 - 0.3}\right)^{162}\\
+&= 5.62253317 \times 10^{-28}
+\end{align*}
+
+We use the values above to calculate the likelihood ratio statistic $\Lambda$.
+
+\begin{align*}
+\Lambda &= \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}\\
+&= \frac{0.142988121}{5.62253317 \times 10^{-28}}\\
+&= 2.543126 \times 10^{-26}\\
+W &= 2\ln \Lambda\\
+&= 2\ln \left( 2.543126 \times 10^{-26} \right)\\
+&= 121.6012
+\end{align*}
+
+We now calculate the p-value $P(\chi^2_1 \geq W)=P(\chi^2_1 \geq 121.6012)$.
+
+```{r significance_test, echo=FALSE, eval = F}
+p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
+p_value
+```
+
+With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
+
+Alternatively, we can can calculate an empirical p-value (see appendix code). We can see the distribution of our simulated LRT statistic in this figure.
+```{r empirical_p_value, out.width="50%", fig.pos='H', fig.align="center", cache=TRUE, echo=FALSE}
+set.seed(414)
+n <- 170
+x <- 8
+psi_null <- 0.3
+pi_null <- (1 - psi_null) / (2 - psi_null)
+pi_mle <- summary(ml)$estimate[1]
+W_obs <- 2 * ((log(choose(n, x)) + x * log(pi_mle) + (n - x) * log(1 - pi_mle)) -
+              (log(choose(n, x)) + x * log(pi_null) + (n - x) * log(1 - pi_null)))
+
+B <- 10000
+w_star <- numeric(B)
+
+for (i in 1:B) {
+  x_star <- rbinom(1, size = n, prob = pi_null)
+  pi_mle_star <- x_star/n
+  
+  w_star[i] <- 2 * ((log(choose(n, x_star)) + 
+                       x_star * log(pi_mle_star) + 
+                       (n - x_star) * log(1 - pi_mle_star)) -
+              (log(choose(n, x_star)) + 
+                 x_star * log(pi_null) + (n - x_star) * log(1 - pi_null)))
+}
+
+hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
+
+p_value_empirical <- sum(w_star > W_obs)/B
+p_value_empirical
+```
+With an empirical p-value of 0, we reach the same conclusion as we did with the p_value we reached assuming the likelihood ration test statistic $W$ follows a $\chi^2_1$ distribution. We reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
+
+### Bayesian Inference
+#### Confidence Interval
 ```{r summarize_pi_posterior_dist, echo=FALSE, eval = F}
+# Postierior distribution of pi
 posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 cat("posterior median ", round(posterior_median_pi, 4), "\n")
 # equal tail 95% interval
@@ -241,33 +271,17 @@ P(0.8739 < \psi < 0.9593) &= 0.95
 \end{align*}
 The posterior median of $\psi$ is 0.9215. Assuming our posterior distribution of $\pi$ is symmetric, our Bayesian model gives us a 95\% confidence interval of $(0.8695, 0.9566)$. Alternatively, the narrowest possible 95\% confidence interval for $\pi$ is $(0.8739, 0.9593)$. 
 
-### Significance Test
-
-We will conduct a significance test at the $\alpha=0.05$ level for testing $$H_0:\psi_0=0.3 \text{ vs. } H_1:\psi_0>0.3$$
-Since $\psi = \frac{1-2\pi}{1-\pi} \Rightarrow \pi=\frac{1-\psi}{2-\psi}$, we can write our null and alternative hypotheses for testing as 
-$H_0: \psi_0=\frac{1-2\pi_0}{1-\pi_0}=0.3 \Rightarrow \pi_0=\frac{1-0.3}{2-0.3}=\frac{7}{17}$ vs. $H_1: \psi_0=\frac{1-2\pi_0}{1-\pi_0}>0.3 \Rightarrow \pi_0<\frac{1-0.3}{2-0.3}=\frac{7}{17}$.
-
-```{r bayes_sig_test, echo=FALSE}
+#### Significance Testing
+We will test $$H_0: \pi_0=\frac{7}{17} \quad\text{ vs. }\quad H_1: \psi_0<\frac{7}{17}$$ 
+```{r bayes_sig_test, echo=FALSE, eval = F}
 pbeta(q = (7/17), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2], lower.tail=FALSE)
 ```
-With a p-value of $1.227958 \times 10^{-26}$, we can reject the null hypothesis $H_0: \pi_0=0.4118$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \pi_0 < 0.4118$. In terms of $\psi$, this corresponds to an alternative hypothesis $H_1: \psi_0 > 0.3$, suggesting the vaccine efficacy is greater than 30\%.
+With a p-value of $1.227958 \times 10^{-26}$ (see appendix code), we can reject the null hypothesis $H_0: \pi_0=0.4118$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \pi_0 < 0.4118$. In terms of $\psi$, this corresponds to an alternative hypothesis $H_1: \psi_0 > 0.3$, suggesting the vaccine efficacy is greater than 30\%.
 
-# Results
-<!-- TODO: move likelihood + bayesian significance test results here -->
-### Likelihood Inference
-
-#### Confidence Intervals
-With the large sample estimate confidence interval, we have our expected Fisher Information for $\hat\psi^{mle}$: $$I(\hat\psi_0^{mle})=\frac{n}{(1-\hat\psi^{mle})(2-\hat\psi^{mle})^2}$$
-which we can then plug in our observed value of $n=170$ and calculated value of $\hat\psi^{mle}=0.9506173$.
-
-Then our 95\% confidence interval is $$0.9506173 \pm 1.96\sqrt{\frac{1}{I(\hat\psi_0^{mle})}}$$ where 1.96 is the number that cuts off an area of $0.05/2$ to the right under the standard normal curve. So our large sample confidence interval for $\psi_0$ is (see code section in appendix): $$[0.9155621, 0.9856725]$$
-
-With the parametric bootstrap method, we use our estimated $\hat\pi=\frac{8}{170}$ and simulate 1000 samples of $T$ from our binomial distribution. We can see the bootstrapped sampling distribution of $\pi_hat$: and then transform to find percentiles to give us a 95\% confidence interval for $\psi_0$ (see mle_bootstrap code in appendix):
-$$[0.9102564, 0.9820359]$$
 
 # Discussion / Conclusion
 
-Through our research, we discovered that the BNT162b2 vaccine reduces the likelihood of getting COVID-19 when compared to the placebo by 95\%, which is reinforced through the 2020 Pfizer study's matching result. This means that the vaccine seems to be effective in reducing COVID-19, which the following results affirm. We decided to use two different methods in order to test the efficacy of the vaccine - namely likelihood inference and Bayesian inference Through likelihood inference, we discovered that with the data given, the most likely probability of the efficacy of the vaccine when compared to the placebo is also 95\%, (with a 95\% confidence interval of approximately 91-92\% to approximately 98-99\%) which reaffirms our prior conclusion. Using this method, we calculated a p-value of $2.8*10^{-9}$, meaning we would reject the null hypothesis and conclude that our vaccine is more than 30\% effective and should be approved by the FDA. Similarly, when using Bayesian inference, we used extremely pessimistic prior assumptions in order to prove without a doubt that the vaccine is successful if it does in fact work. Through this method, we found that the most likely effectiveness of the vaccine is 92\%. In addition to this, we found a 95\% confidence interval of 87\% to 96\%, which means we would reject our null hypothesis with a p-value of $1.2*10^{-26}$. From these results, we can see that our conclusions match those of the Pfizer study, and both recommend using the vaccine to prevent the spread of COVID-19, due to its efficacy of over 30\%. 
+Through our research, we discovered that the BNT162b2 vaccine reduces the likelihood of getting COVID-19 by 95\% when compared to the placebo, which is reinforced through the 2020 Pfizer study's matching result. This means that the vaccine seems to be sufficiently effective in reducing COVID-19, which the following results reaffirm. We decided to use two different methods in order to test the efficacy of the vaccine - namely likelihood inference and Bayesian inference. Through likelihood inference, we discovered that with the data given, the most likely probability of the efficacy of the vaccine when compared to the placebo is also 95\%, (with a 95\% confidence interval of approximately 91-92\% to approximately 98-99\%) which supports our prior conclusion. Using this method, we calculated a p-value of $2.8*10^{-9}$, meaning we would reject the null hypothesis and conclude that our vaccine is more than 30\% effective and should be approved by the FDA. Similarly, when using Bayesian inference, we used extremely pessimistic prior assumptions in order to prove without a doubt that the vaccine is successful if it does in fact work. Through this method, we found that the most likely effectiveness of the vaccine is 92\%. In addition to this, we found a 95\% confidence interval of 87\% to 96\%, which means we would reject our null hypothesis with a p-value of $1.2*10^{-26}$. From these results, we can see that our conclusions match those of the Pfizer study, and both recommend using the vaccine to prevent the spread of COVID-19, due to its efficacy of over 30\%. 
 
 # Bibliography
 
@@ -391,6 +405,7 @@ hdi(qbeta, credMass = 0.95, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2]
 ```
 
 ``` {r ref.label = "mle_ci", eval = TRUE}
+# Large Sample Estimate Confidence Interval for Likelihood Inference
 psi_hat <- 0.9506173
 z <- 1.96
 n <- 170
@@ -404,12 +419,13 @@ upper
 ```
 
 ```{r label="mle_bootstrap", eval=TRUE}
-B = 1000
-set.seed(8383)
+# Boostrapped Confidence Interval for Likelihood Inference
+B = 10000
+set.seed(414)
 
 boot_df <- tibble(
   pi_hat = replicate(n = B,
-                     expr = rbinom(1, 170, 8/170) / 170)
+                     expr = rbinom(n = 1, size = 170, prob = 8/170) / 170)
 )
 
 ggplot(data = boot_df,
@@ -429,6 +445,11 @@ psi_lower
 psi_upper
 ```
 
+```{r summarize_pi_posterior_dist, echo=TRUE, eval = F}
+```
+
+
+
 ## Proofs
 ### Proof A
 Let $X$ denote the number of COVID-19 cases among the $n_1$ patients randomly assigned to the vaccine group and $Y$ denote the number of COVID-19 cases among the $n_2$ patients randomly assigned to the placebo group. Restricting our attention to the total of 170 COVID-19 cases observed in the study, we want to know the PMF of the random variable $T$ that is defined as the count in the vaccine group given this restriction, or $T=X|X+Y=170$.
@@ -441,6 +462,19 @@ Therefore the PMF of $T$ can be found as follows:
 P(T=t)&=P(X=t|X_Y=n)\quad\quad\quad && t=0,1,\dots,n\\
 &=\frac{P(X=t\cap X+Y=n)}{P(X+Y=n)}\\
 &=\frac{P(X=t\cap Y=n-t)}{P(X+Y=n)}\\
-&=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{Since $X$ and $Y$ are independent}
+&=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{$X$ and $Y$ are independent}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot P(Y=n-t)}{P(X+Y=n)}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!}}{P(X+Y=n)}\\
+&=\frac{\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!}}{\frac{e^{(-(n_2\pi_p+n_1\pi_v))}{(n_2\pi_p+n_1\pi_v)}^{n}}{n!}}\\
+&=\frac{e^{(-n_1\pi_v)}{(n_1\pi_v)}^t}{t!} \cdot \frac{e^{(-n_2\pi_p)}{(n_2\pi_p)}^{(n-t)}}{(n-t)!} \cdot  \frac{n!}{e^{(-(n_2\pi_p+n_1\pi_v))}{(n_2\pi_p+n_1\pi_v)}^{n}}\\
+&=\frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{t!(n-t)!} \cdot \frac{n!}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\frac{n!}{t!(n-t)!}\cdot \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\binom{n}{t} \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^n}\\
+&=\binom{n}{t} \frac{(n_1\pi_v)^t\cdot (n_2\pi_p)^{(n-t)}}{(n_2\pi_p+n_1\pi_v)^t(n_2\pi_p+n_1\pi_v)^{n-t}}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(\frac{n_2\pi_p}{n_1\pi_v+n_2\pi_p} \right)^{n-t}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(\frac{n_1\pi_v-n_1\pi_v+n_2\pi_p}{n_1\pi_v+n_2\pi_p} \right)^{n-t}\\
+&=\binom{n}{t} \left(\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^t \left(1-\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p} \right)^{n-t}
 \end{align*}
+This is precisely the PMF for a Binomial distribution. Therefore, we have shown that 
+$$T\sim Binom(n, \pi=\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p})$$
 
