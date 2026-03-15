@@ -107,7 +107,7 @@ We will generate 1000 boostrap estimates of $\hat\psi$, and find the 2.5th and 9
 ### Significance Test
 We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
-When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in figure [LABEL].
+When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$ as $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in figure [LABEL].
 
 Our log-likelihood function doesn't closely resemble its quadratic approximation and isn't symmetric around the MLE, which is a reason to concerned about approximating our likelihood ratio with a $\chi_1^2$ distribution. We can verify our results from the p-value from the $\chi^2_1$ distribution by calculating an empirical p-value.
 
