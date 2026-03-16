@@ -22,7 +22,7 @@ library(HDInterval)
 ```
 
 # Abstract
-In December 2020, Pfizer and BioNTech conducted a placebo-controlled, observer-blinded, pivotal efficacy trial of the BNT162b2 vaccine candidate for Covid-19, a worldwide pandemic affecting over ten million people (Polack et al. 2020). This paper analyzes the data obtained from their study to evaluate the vaccine efficacy of BNT162b2. We model $T$, the number in the BNT162b2 vaccine group from the study's $n=170$ observed COVID-19 cases with a Binomial model, $T\sim Binom(n=170, \pi)$, where $\pi$ denotes the probability of an infected individual being in the vaccine group. We conduct inference on $\psi_0$, the true vaccine efficacy, using both Frequentist and Bayesian frameworks. With the Frequentist approach, we construct 95% confidence intervals using large sample estimation and a parametric bootstrap percentile interval and also conduct a likelihood ratio test. With the Bayesian approach, we use a pessismistic prior and calculate a posterior probability that vaccine efficacy exceeds FDA's 30\% standard. With both frameworks, we estimate that the true vaccine efficacy is around 95\%, indicating that there is signficant evidence that the vaccine efficacy of BNT162b2 exceeds 30\% and can be accepted.
+In December 2020, Pfizer and BioNTech conducted a placebo-controlled, observer-blinded, pivotal efficacy trial of the BNT162b2 vaccine candidate for Covid-19, a worldwide pandemic affecting over ten million people (Polack et al., 2020). This paper analyzes the data obtained from their study to evaluate the vaccine efficacy of BNT162b2. We model $T$, the number in the BNT162b2 vaccine group from the study's $n=170$ observed COVID-19 cases with a Binomial model, $T\sim Binom(n=170, \pi)$, where $\pi$ denotes the probability of an infected individual being in the vaccine group. We conduct inference on $\psi_0$, the true vaccine efficacy, using both Frequentist and Bayesian frameworks. With the Frequentist approach, we construct 95% confidence intervals using large sample estimation and a parametric bootstrap percentile interval and also conduct a likelihood ratio test. With the Bayesian approach, we use a pessismistic prior and calculate a posterior probability that vaccine efficacy exceeds FDA's 30\% standard. With both frameworks, we estimate that the true vaccine efficacy is around 95\%, indicating that there is signficant evidence that the vaccine efficacy of BNT162b2 exceeds 30\% and can be accepted.
 
 # Keywords
 *Bayesian Statistics*, *Likelihood Inference*, *Relative Risk*, *Efficacy*
@@ -30,7 +30,7 @@ In December 2020, Pfizer and BioNTech conducted a placebo-controlled, observer-b
 \newpage
 
 # Introduction / Background
-Millions of people fell victim to COVID-19 in a global pandemic beginning in 2020, as seen in a timeline published by the CDC (CDC, 2024). Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart (Polack, 2020). Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below in figure 1.
+Millions of people fell victim to COVID-19 in a global pandemic beginning in 2020, as seen in a timeline published by the CDC (CDC, 2024). Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart (Polack et al., 2020). Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below in figure 1.
 
 ```{r label="important_R_code", eval=TRUE, echo=FALSE, fig.cap = "Visualizations of Data Distribution"}
 # You can reference your code in the appendix (sample here).
@@ -194,9 +194,9 @@ We use the values above to calculate the likelihood ratio statistic $\Lambda$.
 \begin{align*}
 \Lambda &= \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}\\
 &= \frac{0.142988121}{5.62253317 \times 10^{-28}}\\
-&= 2.543126 \times 10^{-26}\\
+&= 2.543126 \times 10^{26}\\
 W &= 2\ln \Lambda\\
-&= 2\ln \left( 2.543126 \times 10^{-26} \right)\\
+&= 2\ln \left( 2.543126 \times 10^{26} \right)\\
 &= 121.6012
 \end{align*}
 
@@ -465,7 +465,7 @@ where $X$ and $Y$ are independent, since the Poisson distribution approximates a
 
 Therefore the PMF of $T$ can be found as follows:
 \begin{align*}
-P(T=t)&=P(X=t|X_Y=n)\quad\quad\quad && t=0,1,\dots,n\\
+P(T=t)&=P(X=t|X+Y=n)\quad\quad\quad && t=0,1,\dots,n\\
 &=\frac{P(X=t\cap X+Y=n)}{P(X+Y=n)}\\
 &=\frac{P(X=t\cap Y=n-t)}{P(X+Y=n)}\\
 &=\frac{P(X=t)\cdot P(Y=n-t)}{P(X+Y=n)}\quad\quad &&\text{$X$ and $Y$ are independent}\\
