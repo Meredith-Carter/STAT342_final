@@ -30,7 +30,7 @@ Write your abstract here.
 \newpage
 
 # Introduction / Background
-Tens of millions of people fell victim to COVID-19 in a global pandemic beginning in 2020. Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart. Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below.
+Tens of millions of people fell victim to COVID-19 in a global pandemic beginning in 2020. Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart. Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below in figures 1 and 2.
 
 ```{r label="important_R_code", eval=TRUE, echo=FALSE}
 # You can reference your code in the appendix (sample here).
@@ -40,7 +40,7 @@ df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411),
                              rep("no", times = 17411), 
                              rep("yes", times = 162), 
                              rep("no", times = 17511)))
-df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
+df %>% tabyl(Vaccine, covid) %>% adorn_percentages() %>% adorn_totals %>% adorn_ns()
 
 mosaicplot(table(df), ylab = "COVID", 
            main = "COVID Status based on Vaccine vs Placebo")
@@ -79,7 +79,7 @@ We will construct 95\% confidence intervals for $\psi_0$ in 2 ways: using a larg
 #### Large sample confidence interval estimate
 For our Binomial model $T$, we assume 2 regularity conditions. First, we assume that the possible values of $t$ do not depend on our parameter $\psi$, and second, that the true value of the parameter does not fall on a boundary. These conditions can be verified by plotting the log-likelihood function of $\psi$ along with the second-order Taylor approximation around the MLE and checking if the second-order Taylor series well approximates our log-likelihood function.
 
-```{r second_order_approximation,  out.width="50%", fig.pos='H', fig.align="center",fig.cache=TRUE, warning=FALSE, echo=FALSE}
+```{r second_order_approximation,  out.width="50%", fig.pos='H', fig.align="center",fig.cache=TRUE, warning=FALSE, echo=FALSE, fig.cap = "Second-Order Taylor Approximation"}
 loglik_binom <- function(pi, n, x) {
   ifelse((pi <= 0) | (pi >= 1), NA,
     log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
@@ -93,7 +93,7 @@ plot(ml) +
        x = expression(pi))
 ```
 
-Based on the figure, we can assume these regularity conditions hold. And so we can say $$\hat\psi_0^{mle}\approx Norm\left(\psi_0, \sqrt{\frac{1}{I(\psi_0)}}\right)$$ where $I(\psi_0)$ is the expected Fisher information defined as (see appendix B):
+Based on figure 2, we can assume these regularity conditions hold. And so we can say $$\hat\psi_0^{mle}\approx Norm\left(\psi_0, \sqrt{\frac{1}{I(\psi_0)}}\right)$$ where $I(\psi_0)$ is the expected Fisher information defined as (see appendix B):
 
 $$I(\psi_0)=nE\left[-\frac{d^2}{d\psi^2}\ln(f_\psi(X))\right]_{\psi=\psi_0}=\frac{n}{(1-\psi)(2-\psi)^2}$$
 
@@ -128,9 +128,9 @@ ab <- beta.select(quantile1 = list(p = .01, x = 7/17),
             quantile2 = list(p = .1, x = 1/2))
 ```
 
-From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$
+From this, we can see that we would have an a value of `r ab[1]` and a b value of `r ab[2]`. This would give us the following models: $$f(T | \pi) \sim Binom(n = 170, \pi) \text{ Data Model}$$ $$g(\pi) = Beta(a = `r ab[1]`, b = `r ab[2]`) \text{ Prior Model}$$ $$h(\pi | t) = Beta(a = `r ab[1]` - t, b = 170 - t + `r ab[2]`)$$We can see the comparison of these plots in figure 3. 
 
-```{r, meredith_bayes_vis, echo = F}
+```{r, meredith_bayes_vis, echo = F, fig.cap = "Likelihood vs Prior vs Posterior Distribution"}
 lik_binom <- function(pi, n, x){
   10^2 * dbinom(x = x, size = n, prob = pi)
 }
@@ -149,7 +149,7 @@ ggplot() +
                 args = list(n = 170, x = 8),
                 xlim = c(0,1), n = 500) +
   labs(title = "Prior vs Posterior vs Likelihood Model of COVID Vaccine", 
-       subtitle = "t = 8 observed", 
+       subtitle = "t = 8 Observed", 
        x = expression(pi), 
        y = "PDF")
 ```
@@ -212,8 +212,8 @@ p_value
 
 With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
-Alternatively, we can can calculate an empirical p-value (see appendix code). We can see the distribution of our simulated LRT statistic in this figure.
-```{r empirical_p_value, out.width="50%", fig.pos='H', fig.align="center", cache=TRUE, echo=FALSE}
+Alternatively, we can can calculate an empirical p-value (see appendix code). We can see the distribution of our simulated LRT statistic in figure 4.
+```{r empirical_p_value, out.width="50%", fig.pos='H', fig.align="center", cache=TRUE, echo=FALSE, fig.cap = "Distribution of Simulated LRT Statistic"}
 set.seed(414)
 n <- 170
 x <- 8
