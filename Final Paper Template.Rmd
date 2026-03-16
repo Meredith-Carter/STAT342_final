@@ -2,7 +2,7 @@
 title: "Efficacy of the Pfizer Vaccine on COVID-19"
 author: "Meredith Carter, Maggie Lam, and Swarnya Srivastava"
 date: 3/6/2026
-geometry: margin=0.7in
+geometry: margin=0.6in
 output: pdf_document
 urlcolor: blue
 header-includes:
