@@ -2,7 +2,7 @@
 title: "Efficacy of the Pfizer Vaccine on COVID-19"
 author: "Meredith Carter, Maggie Lam, and Swarnya Srivastava"
 date: 3/6/2026
-geometry: margin=0.5in
+geometry: margin=0.7in
 output: pdf_document
 urlcolor: blue
 header-includes:
@@ -22,7 +22,7 @@ library(HDInterval)
 ```
 
 # Abstract
-Write your abstract here.
+In December 2020, Pfizer and BioNTech conducted a placebo-controlled, observer-blinded, pivotal efficacy trial of the BNT162b2 vaccine candidate for Covid-19, a worldwide pandemic affecting over ten million people (Polack et al. 2020). This paper analyzes the data obtained from their study to evaluate the vaccine efficacy of BNT162b2. We model $T$, the number in the BNT162b2 vaccine group from the study's $n=170$ observed COVID-19 cases with a Binomial model, $T\sim Binom(n=170, \pi)$, where $\pi$ denotes the probability of an infected individual being in the vaccine group. We conduct inference on $\psi_0$, the true vaccine efficacy, using both Frequentist and Bayesian frameworks. With the Frequentist approach, we construct 95% confidence intervals using large sample estimation and a parametric bootstrap percentile interval and also conduct a likelihood ratio test. With the Bayesian approach, we use a pessismistic prior and calculate a posterior probability that vaccine efficacy exceeds FDA's 30\% standard. With both frameworks, we estimate that the true vaccine efficacy is around 95\%, indicating that there is signficant evidence that the vaccine efficacy of BNT162b2 exceeds 30\% and can be accepted.
 
 # Keywords
 *Bayesian Statistics*, *Likelihood Inference*, *Relative Risk*, *Efficacy*
@@ -110,11 +110,8 @@ We will generate 1000 boostrap estimates of $\hat\psi$, and find the 2.5th and 9
 ### Significance Test
 We wish to test $$H_0: \psi_0=0.3, H_1: \psi_0 > 0.3$$
 We can use the likelihood ratio statistic to calculate a p-value: $$\Lambda = \frac{L\left(\widehat{\psi}_0^{mle}\right)}{L\left(\psi_0^{null}\right)}$$
-<<<<<<< HEAD
-When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$ as $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in figure [LABEL].
-=======
+
 When the null hypothesis $H_0$ is true, $2\ln\Lambda \approx \chi^2_1$, when $n \rightarrow \infty$. The approximate $\chi^2_1$ distribution on which the likelihood ratio significance test is based relies on the second order approximation to the log-likelihood being accurate. We can verify this by observing the graph of the log likelihood function with its quadratic approximation as seen in the large sample confidence interval estimate section. Assuming the regularity conditions hold, we will calculate $L\left(\widehat{\psi}_0^{mle}\right)$ and $L\left(\psi_0^{null}\right)$, and then find the likelihood ratio statistic $\Lambda$ to compare against the $\chi^2_1$ distribution to calculate the p-value.
->>>>>>> 337b1db34a8a934d6e294784919bfe62570841e1
 
 An alternative to using the $\chi_1^2$ distribution to calculate the p-value is to calculate the empirical p-value by generating a large number of samples from the null hypothesis. We then determine the fraction of samples with a likelihood ratio test statistic greater than $W$ to calculate the p-value.
 
