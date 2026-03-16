@@ -30,9 +30,9 @@ Write your abstract here.
 \newpage
 
 # Introduction / Background
-Tens of millions of people fell victim to COVID-19 in a global pandemic beginning in 2020. Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart. Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below in figures 1 and 2.
+Tens of millions of people fell victim to COVID-19 in a global pandemic beginning in 2020. Pfizer and BioNTech conducted a placebo-controlled and double blinded study targeting 170 total infections to determine the efficacy of their BNT162b2 vaccine. The study was conducted on subjects 16 years old and above who didn't have previous signs of infection. Subjects received two doses of either the placebo or the BNT162b2 vaccine 21 days apart. Laboratory-confirmed COVID-19 presence was noted for each subject at least 7 days after their second dose. The data from the study is summarized below in figure 1.
 
-```{r label="important_R_code", eval=TRUE, echo=FALSE}
+```{r label="important_R_code", eval=TRUE, echo=FALSE, fig.cap = "Visualizations of Data Distribution"}
 # You can reference your code in the appendix (sample here).
 df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411), 
                                rep("placebo", times = 162 + 17511)), 
