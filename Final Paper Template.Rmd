@@ -317,7 +317,7 @@ Then finding $I(\psi)$:
 
 
 ## Code
-```{r ref.label = "important_R_code", eval = TRUE}
+```{r ref.label = "important_R_code", eval = TRUE, fig.cap = "Figure 1 Code"}
 df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411), 
                                rep("placebo", times = 162 + 17511)), 
                  "covid" = c(rep("yes", times = 8), 
@@ -327,6 +327,8 @@ df <- data.frame("Vaccine" = c(rep("BNT162b2", times = 8 + 17411),
 df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_ns() 
 
 mosaicplot(table(df))
+```
+```{r, appendix2, fig.cap = "Figure 2 Code"}
 
 loglik_binom <- function(pi, n, x) {
   ifelse((pi <= 0) | (pi >= 1), NA,
@@ -339,10 +341,12 @@ ml <- maxLik2(loglik = loglik_binom, start = 0.5, n = 170, x = 8)
 plot(ml) +
   labs(title = "Second Order Approximation to Binomial Log-Likelihood",
        x = expression(pi))
-
+```
+```{r, appendix3, fig.cap = "P Value For Hypothesis Testing in Likelihood Inference"}
 p_value <- pchisq(121.6012, df=1, lower.tail=FALSE)
 p_value
-
+```
+```{r, appendix4, fig.cap = "Figure 4 Code"}
 set.seed(414)
 n <- 170
 x <- 8
@@ -367,13 +371,16 @@ for (i in 1:B) {
 }
 
 hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
-
+```
+```{r, appendix5, fig.cap = "Emperical P-Value"}
 p_value_empirical <- sum(w_star > W_obs)/B
 p_value_empirical
-
+```
+```{r, appendix6, fig.cap = "Calculating a and b for Beta Distribution"}
 ab <- beta.select(quantile1 = list(p = .01, x = 7/17), 
             quantile2 = list(p = .1, x = 1/2))
-
+```
+```{r, appendix7, fig.cap = "Figure 3 Code"}
 lik_binom <- function(pi, n, x){
   10^2 * dbinom(x = x, size = n, prob = pi)
 }
@@ -395,6 +402,8 @@ ggplot() +
        subtitle = "t = 8 observed", 
        x = expression(pi), 
        y = "PDF")
+```
+```{r, appendix8, fig.cap = "Calculating Confidence Intervals Bayes Inference"}
 posterior_median_pi <- qbeta(0.5, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 cat("posterior median ", round(posterior_median_pi, 4), "\n")
 # equal tail 95% interval
@@ -403,7 +412,7 @@ qbeta(p = c(0.025, 0.975), shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 hdi(qbeta, credMass = 0.95, shape1 = ab[1] - 8 + 1, shape2 = 170 - 8 + 1 + ab[2])
 ```
 
-``` {r ref.label = "mle_ci", eval = TRUE}
+``` {r ref.label = "mle_ci", eval = TRUE, fig.cap = "Confidence Interval from Likelihood Inference"}
 # Large Sample Estimate Confidence Interval for Likelihood Inference
 psi_hat <- 0.9506173
 z <- 1.96
@@ -417,7 +426,7 @@ lower
 upper
 ```
 
-```{r label="mle_bootstrap", eval=TRUE}
+```{r label="mle_bootstrap", eval=TRUE, fig.cap = "Bootstraped Confidence Interval"}
 # Boostrapped Confidence Interval for Likelihood Inference
 B = 10000
 set.seed(414)
@@ -476,4 +485,3 @@ P(T=t)&=P(X=t|X_Y=n)\quad\quad\quad && t=0,1,\dots,n\\
 \end{align*}
 This is precisely the PMF for a Binomial distribution. Therefore, we have shown that 
 $$T\sim Binom(n, \pi=\frac{n_1\pi_v}{n_1\pi_v+n_2\pi_p})$$
-
