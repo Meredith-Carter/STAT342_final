@@ -1,5 +1,5 @@
 ---
-title: "Your Paper Title Here"
+title: "Efficacy of the Pfizer Vaccine on COVID-19"
 author: "Meredith Carter, Maggie Lam, and Swarnya Srivastava"
 date: 3/6/2026
 geometry: margin=0.5in
@@ -45,6 +45,8 @@ df %>% tabyl(Vaccine, covid) %>% adorn_percentages()%>% adorn_totals %>% adorn_n
 mosaicplot(table(df), ylab = "COVID", 
            main = "COVID Status based on Vaccine vs Placebo")
 ```
+
+To continue this research, we will also test if the Pfizer vaccine is effective in preventing COVID-19. 
 
 # Statistical Methods
 
@@ -238,7 +240,7 @@ for (i in 1:B) {
 hist(w_star, breaks = 20, main = "Distribution of LRT statistic", xlab = expression(W))
 
 p_value_empirical <- sum(w_star > W_obs)/B
-p_value_empirical
+# p_value_empirical
 ```
 With an empirical p-value of 0, we reach the same conclusion as we did with the p_value we reached assuming the likelihood ration test statistic $W$ follows a $\chi^2_1$ distribution. We reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.01$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
