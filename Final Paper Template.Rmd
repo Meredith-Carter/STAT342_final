@@ -79,7 +79,7 @@ We will construct 95\% confidence intervals for $\psi_0$ in 2 ways: using a larg
 #### Large sample confidence interval estimate
 For our Binomial model $T$, we assume 2 regularity conditions. First, we assume that the possible values of $t$ do not depend on our parameter $\psi$, and second, that the true value of the parameter does not fall on a boundary. These conditions can be verified by plotting the log-likelihood function of $\psi$ along with the second-order Taylor approximation around the MLE and checking if the second-order Taylor series well approximates our log-likelihood function.
 
-```{r second_order_approximation,  out.width="50%", fig.pos='H', fig.align="center",fig.cache=TRUE, warning=FALSE, echo=FALSE, fig.cap = "Second-Order Taylor Approximation"}
+```{r second_order_approximation,  out.width="50%", fig.align="center",fig.cache=TRUE, warning=FALSE, echo=FALSE, fig.cap = "Second-Order Taylor Approximation"}
 loglik_binom <- function(pi, n, x) {
   ifelse((pi <= 0) | (pi >= 1), NA,
     log(choose(n, x)) + x * log(pi) + (n - x) * log(1 - pi)
@@ -213,7 +213,7 @@ p_value
 With a p-value of $2.822313 \times 10^{-28}$, we reject the null hypothesis $H_0: \psi_0=0.3$ under an alpha level $\alpha=0.05$, supporting our alternative hypothesis $H_1: \psi_0 > 0.3$ that the vaccine efficacy is greater than 0.3.
 
 Alternatively, we can can calculate an empirical p-value (see appendix code). We can see the distribution of our simulated LRT statistic in figure 4.
-```{r empirical_p_value, out.width="50%", fig.pos='H', fig.align="center", cache=TRUE, echo=FALSE, fig.cap = "Distribution of Simulated LRT Statistic"}
+```{r empirical_p_value, out.width="50%", fig.align="center", cache=TRUE, echo=FALSE, fig.cap = "Distribution of Simulated LRT Statistic"}
 set.seed(414)
 n <- 170
 x <- 8
